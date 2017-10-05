@@ -9,7 +9,7 @@ Don’t forget to change the namespace of the Provider class – it should be th
 */
 
 
-class Test-ServiceProvider extends ServiceProvider
+class OrderServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
