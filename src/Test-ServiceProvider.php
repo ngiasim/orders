@@ -18,6 +18,7 @@ class Test-ServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadViewsFrom(__DIR__.'/views', 'orders');
         // $this->publishes([
         // __DIR__.'/views' => base_path('resources/views/orders'),
         // ]);
@@ -30,7 +31,7 @@ class Test-ServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // include __DIR__.'/Test-routes.php';
-        // $this->app->make('Ngiasim\Orders\Test-Controller');
+         include __DIR__.'/orders_routes.php';
+         $this->app->make('Ngiasim\Orders\OrderController');
     }
 }
