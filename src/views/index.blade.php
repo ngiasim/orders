@@ -69,7 +69,7 @@
            
             <div class="content">
                 <div class="title m-b-md">
-                  {{ $current_time }}
+                  {{ $text }}
                 </div>
 
             </div>
