@@ -1,0 +1,12 @@
+{
+    "name": "ngiasim/orders",
+    "description": "Package to show time",
+    "authors": [
+        {
+            "name": "Asim Zubair",
+            "email": "asim@nextgeni.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
