@@ -1,6 +1,6 @@
 {
     "name": "ngiasim/orders",
-    "description": "Package to show time",
+    "description": "Package to manage orders",
     "authors": [
         {
             "name": "Asim Zubair",
