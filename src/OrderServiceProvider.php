@@ -19,9 +19,13 @@ class OrderServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/views', 'orders');
+      //  $this->loadMigrationsFrom(__DIR__.'/migrations');
         // $this->publishes([
         // __DIR__.'/views' => base_path('resources/views/orders'),
         // ]);
+        // $this->publishes([
+        // _DIR_ . '/migrations' => $this->app->databasePath() . '/migrations'
+        // ], 'migrations');
     }
 
     /**

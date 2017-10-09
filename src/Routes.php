@@ -1,7 +1,16 @@
 <?php
 Route::group([
-    'domain' => Config::get('app.domains.store')
+    'domain' => Config::get('app.domains.cockpit')
 ], function () {
-Route::get('order', 
-  'ngiasim\orders\OrderController@index');
-});
+
+    Route::group(['middleware' => ['web']], function () {
+		Route::group([
+		'middleware' => ['auth']
+	], function () {
+        Route::get('phoneorder','ngiasim\orders\OrderController@phoneOrder');
+		Route::get('getProduct/{id}', 'ngiasim\orders\OrderController@getProductsByProductId');
+		//Route::resource('products','ngiasim\products\ProductController');
+        });
+	});
+		});
+
