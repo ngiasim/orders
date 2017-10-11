@@ -45,7 +45,7 @@
                         <!-- <button type="button" class="btn btn-success" onClick="lookupcustomer();" > -->
                           <!-- <a class="btn btn-success" href="{{ url('/customers/create') }}" onClick="addNewCustomer();">Add New</a>
                         <!-- </button> -->
-                    <!-- </div> --> 
+                    <!-- </div> -->
                   </div>
                   <div id="customers-view"class="form-group row">
                       @include('orders::selectedcustomer')
@@ -93,6 +93,23 @@
 
 //var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 
+  function placeorder()
+  {
+    alert("sss");
+    $.ajax({
+          url: "/placeOrder",
+          dataType: 'JSON',
+          type:'POST',
+          data:{"_token": "{{ csrf_token() }}","source":"p","checkout_currency_code":"USD"},
+          success: function (res) {
+            console.log(res);
+            if (res.success)
+            {
+              location.href = "/order/"+res.order_id;
+            }
+          }
+        });
+  }
 
   function selectcustomer(id){
      $("#clid").val(id);
