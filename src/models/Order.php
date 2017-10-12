@@ -17,10 +17,27 @@ class Order extends Model
 	       return $this->belongsTo('App\User','fk_customer','users_id');
 	  }
 
-	  //  public function orderItems()
-	  //  {
-	  //      return $this->hasMany('App\OrderItem');
-	  //  }
+		public function orderItem()
+	 	{
+			 return $this->hasMany('App\OrderItem', 'fk_order', 'order_id');
+	 	}
+
+		public function getOrdersByFilters($filter) {
+
+			$data = $this->orderBy('order_id','DESC');
+
+		  if(count($filter))
+		  {
+			   if(!empty($filter['customer_id']))
+			   {
+					 $data = $data->where('fk_customer',  '=', $filter['customer_id']);
+			   }
+
+		  }
+				return $data->get();
+
+			  // return $this->all();
+		}
 
     // public function productsDescription()
     // {
