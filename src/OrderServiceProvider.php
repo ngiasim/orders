@@ -19,6 +19,7 @@ class OrderServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/views', 'orders');
+        $this->loadViewsFrom(__DIR__.'/views/cart', 'cart');
         // $this->loadMigrationsFrom(__DIR__.'/migrations');
         // $this->publishes([
         // __DIR__.'/views' => base_path('resources/views/orders'),
@@ -40,5 +41,6 @@ class OrderServiceProvider extends ServiceProvider
     {
          include __DIR__.'/routes.php';
          $this->app->make('Ngiasim\Orders\OrderController');
+         $this->app->make('Ngiasim\Orders\CartController');
     }
 }

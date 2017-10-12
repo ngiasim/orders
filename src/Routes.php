@@ -7,6 +7,13 @@ Route::group([
 		Route::group([
 		'middleware' => ['auth']
 	], function () {
+
+        Route::get('/cart', 'ngiasim\orders\CartController@index'); //->name('roles.destroy')->middleware(['permission:role-delete']);
+    		Route::post('/addcart', 'ngiasim\orders\CartController@addToCart'); //->name('roles.destroy')->middleware(['permission:role-delete']);
+    		Route::post('/updatecart', 'ngiasim\orders\CartController@updateCart');
+        Route::post('/deletecartitem', 'ngiasim\orders\CartController@deleteCartItem');
+        Route::post('/addCartCustomer', 'ngiasim\orders\CartController@addCustomerToCart');
+
         Route::get('phoneorder','ngiasim\orders\OrderController@phoneOrder');
 		    Route::get('getProduct/{id?}', 'ngiasim\orders\OrderController@getProductsByProductId');
         Route::get('getCustomers/{id?}', 'ngiasim\orders\OrderController@getCustomersByCustomerId');

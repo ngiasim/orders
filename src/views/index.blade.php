@@ -80,7 +80,7 @@
 				  <div class="panel-heading">Cart</div>
 				  <div class="panel-body">
 					  <div id="cartviewlist" class="form-group row">
-					  @include('cart.index')
+					  @include('cart::index')
 					  </div>
 				  </div>
 			</div>
@@ -95,7 +95,6 @@
 
   function placeorder()
   {
-    alert("sss");
     $.ajax({
           url: "/placeOrder",
           dataType: 'JSON',
