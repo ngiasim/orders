@@ -45,7 +45,7 @@ class OrderController extends Controller
 
   public function getCustomersByCustomerId($id)
   {
-    $customers =  User::where('users_id', '=', $id)->orWhere('email','like','%'.$id.'%')->get();
+    $customers =  User::where('users_id', '=', $id)->orWhere('email','like','%'.$id.'%')->where('users_type', '=', 'c')->get();
     $customerView = \View::make('orders::customerlisting', array("customers"=>$customers))->render();
     $data = array(
         "customerView" => $customerView
@@ -101,6 +101,11 @@ class OrderController extends Controller
                 $orderItem->save();
                 Cart::remove($item->rowId);
               }
+
+              $user = User::find($customer_id);
+              $user->orders_count= $user->orders_count + 1;
+              $user->save();
+
           //return redirect('/order/'.$order->order_id);
         //
         // }else{
@@ -114,8 +119,18 @@ class OrderController extends Controller
 
     }
 
-    public function index(){
-        $orders = Order::all();
+    public function index(Request $request){
+
+         $input = $request->all();
+         $order = new Order();
+         $filter = Array();
+        //  if ($input['customer_id'])
+        //  {
+        //    $filter['customer_id'] = $input['customer_id'];
+        //  }
+         //dd($input['customer_id']);
+         $orders = $order->getOrdersByFilters($input);
+        //$orders = Order::all();
 
         return view('orders::listview',['orders'=>$orders]);
     }
