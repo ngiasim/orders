@@ -101,7 +101,6 @@
           type:'POST',
           data:{"_token": "{{ csrf_token() }}","source":"p","checkout_currency_code":"USD"},
           success: function (res) {
-            console.log(res);
             if (res.success)
             {
               location.href = "/order/"+res.order_id;
@@ -118,7 +117,6 @@
          type:'POST',
          data:{"_token": "{{ csrf_token() }}",customer_id: id},
          success: function (res) {
-           console.log(res);
            if (res.success)
            {
              $("#customers-view").html(res.customerView);
@@ -160,13 +158,16 @@
 	 }
 
 	 function addtocart(id){
+     var invsku = $("#"+id+"-invsku").val();
+     var invId =$("#"+id+"-invId").val();
+     console.log(invsku);
+     console.log(invId);
 		$.ajax({
           url: "/addcart",
           dataType: 'JSON',
           type:'POST',
-          data:{"_token": "{{ csrf_token() }}",product_id: id},
+          data:{"_token": "{{ csrf_token() }}",product_id: id,invsku:invsku,invId:invId},
           success: function (res) {
-            console.log(res);
             if (res.success)
             {
               $("#cartviewlist").html(res.cartview);

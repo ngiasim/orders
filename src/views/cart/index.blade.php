@@ -22,7 +22,8 @@
                             <div class="media-body">
                                 <h4 class="media-heading"><a href="#">{{$rows->name}}</a></h4>
                                 <h5 class="media-heading"> by <a href="#">Brand name</a></h5>
-                                <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                                <span>Status: </span><span class="text-success"><strong>In Stock</strong></span><br>
+                                <span>inventory: </span><span class="text-success"><strong>{{$rows->options->invsku}}</strong></span>
                             </div>
                         </div></td>
                         <td class="col-sm-1 col-md-1" style="text-align: center">

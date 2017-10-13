@@ -1,4 +1,4 @@
-<?php
+->nullable()<?php
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -41,7 +41,7 @@ class CreateOrderTable extends Migration
             $table->string('checkout_currency_code',3)->default('USD');
             $table->float('checkout_currency_rate');
             $table->string('original_referer',255);
-            $table->dateTime('deleted_at');
+            $table->dateTime('deleted_at')->nullable();
             $table->integer('fk_address_shipping',11)->unsigned();
             $table->integer('fk_address_billing',11)->unsigned();
             $table->foreign('fk_order_status')->references('order_status_id')->on('order_status');

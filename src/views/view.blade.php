@@ -27,7 +27,8 @@
                              <div class="media-body">
                                  <h4 class="media-heading"><a href="#">{{$item->product->productsDescription->products_name}}</a></h4>
                                  <h5 class="media-heading"> by <a href="#">Brand name</a></h5>
-                                 <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                                 <span>Status: </span><span class="text-success"><strong>In Stock</strong></span><br>
+                                 <span>inventory: </span><span class="text-success"><strong>{{$item->inventory_code}}</strong></span>
                              </div>
                          </div>
                        </td>

@@ -12,15 +12,17 @@ use App\Product_status;
 use App\User;
 use App\Order;
 use App\OrderItem;
-
+use App\ProductOption;
+use App\ProductAttribute;
+use App\ProductOptionValue;
+use DB;
 
 class OrderController extends Controller
 {
 
   public function phoneOrder()
   {
-
-      //dd(session()->all());
+       //dd(\Session::all());
        $cartItems = Cart::content();
        $total = Cart::total();
        $total_tax = Cart::tax();
@@ -35,8 +37,44 @@ class OrderController extends Controller
     // $products =  Product::with(array('productsDescription' => function($query) {
     //       $query->where('products_name', 'like','%Jacket%')->orwhere('product_id', '=', "Jacket");
     //    }))->get();
-    $products =  Product::where('product_id', '=', $id)->orWhere('meta_keywords','like','%'.$id.'%')->with('productsDescription')->get();
-    $productView = \View::make('orders::productlisting', array("products"=>$products))->render();
+    //$products =  Product::where('product_id', '=', $id)->orWhere('meta_keywords','like','%'.$id.'%')->with('productsDescription')->get();
+    $products =  Product::where('product_id', '=', $id)
+    ->orWhere('meta_keywords','like','%'.$id.'%')
+    ->with('productsDescription')
+    ->with('ProductAttribute')
+    ->get();
+
+     foreach ($products as $option ) {
+       $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name
+                         from inventory_items ii,inventory_item_detail iid,product_option_value pov,product_option po
+                         ,product p,map_product_inventory_item mpii
+                         where inventory_id = iid.fk_inventory_item
+                         and iid.fk_product_option_values = product_option_value_id
+                         and iid.fk_product_option = product_option_id
+                         and mpii.fk_inventory_item = ii.inventory_id
+                         and product_id = mpii.fk_product
+                         and product_id ='.$option->product_id);
+       //dd($products_attributes);
+        $json_cook_atributes_product ;
+        $cook_atributes_product ;
+        foreach ($products_attributes as $pa ) {
+          //$cook_atributes_product[$option->products_sku][$option->name]
+          foreach ($option->ProductAttribute as $inneratribute ) {
+
+              if($pa->product_option_id == $inneratribute->fk_product_option){
+                   $cook_atributes_product[$pa->products_sku][$pa->option_name][]=$pa->name;
+              }
+          }
+          $cook_atributes_product[$pa->products_sku][$pa->option_name] = array_unique($cook_atributes_product[$pa->products_sku][$pa->option_name]);
+
+
+          $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["options"][$pa->option_name]=$pa->name;
+          $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_id"] = $pa->inventory_id;
+        }
+
+     }
+
+    $productView = \View::make('orders::productlisting', array("products"=>$products,"cook_atributes_product"=>$cook_atributes_product,"json_cook_atributes_product"=>json_encode($json_cook_atributes_product)))->render();
     $data = array(
         "productView" => $productView
     );
@@ -94,6 +132,8 @@ class OrderController extends Controller
                 $orderItem->fk_product=$item->id;
                 $orderItem->products_name=$item->name;
                 $orderItem->fk_product_status=$item->options->fk_product_status;
+                $orderItem->inventory_code=$item->options->invsku;
+                $orderItem->fk_inventory=$item->options->invId;
                 $orderItem->products_price=$item->price;
                 $orderItem->ordered_quantity=$item->qty;
                 $orderItem->peritem_tax= ($item->price*($item->taxRate/100))*$item->qty; // $item->id;

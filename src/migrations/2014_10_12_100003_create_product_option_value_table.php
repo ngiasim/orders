@@ -20,7 +20,7 @@ class CreateProductOptionValueTable extends Migration
             $table->integer('fk_product_option')->unsigned();
             $table->string('name',20)->nullable();
             $table->string('display_name',64)->nullable();
-            $table->dateTime('deleted_at');
+            $table->dateTime('deleted_at')->nullable();
             $table->integer('created_by')->default('0');
             $table->integer('updated_by')->default('0');
             $table->integer('deleted_by')->default('0');
