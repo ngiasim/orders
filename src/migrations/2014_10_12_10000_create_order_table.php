@@ -31,7 +31,7 @@ class CreateOrderTable extends Migration
             $table->double('shipping_tax',13,2);
             $table->double('tax',13,2);
             $table->double('order_total',13,2);
-            $table->double('discount_total',13,2);
+            $table->double('discount_total',13,2)->nullable();
             $table->string('promocode',15);
             $table->double('store_credit',13,2);
             $table->double('order_final_total',13,2);

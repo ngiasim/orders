@@ -39,7 +39,7 @@ class OrderServiceProvider extends ServiceProvider
      */
     public function register()
     {
-         include __DIR__.'/Routes.php';
+         include __DIR__.'/routes.php';
          $this->app->make('Ngiasim\Orders\OrderController');
          $this->app->make('Ngiasim\Orders\CartController');
     }
