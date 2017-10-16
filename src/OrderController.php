@@ -42,7 +42,7 @@ class OrderController extends Controller
     ->orWhere('meta_keywords','like','%'.$id.'%')
     ->with('productsDescription')
     ->with('ProductAttribute')
-    ->get();
+    ->limit(10)->get();
 
      foreach ($products as $option ) {
        $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name
