@@ -25,7 +25,7 @@ class CreateInventoryItemDetailTable extends Migration
             $table->integer('updated_by')->default('0');
             $table->integer('deleted_by')->default('0');
             $table->foreign('fk_product_option')->references('product_option_id')->on('product_option');
-            $table->foreign('fk_inventory_item')->references('inventory_id')->on('inventory_items');
+            $table->foreign('fk_inventory_item')->references('inventory_id')->on('inventory_item');
             $table->foreign('fk_product_option_values')->references('product_option_value_id')->on('product_option_value');
             $table->timestamps();
         });

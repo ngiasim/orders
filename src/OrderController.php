@@ -46,7 +46,7 @@ class OrderController extends Controller
 
      foreach ($products as $option ) {
        $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name
-                         from inventory_items ii,inventory_item_detail iid,product_option_value pov,product_option po
+                         from inventory_item ii,inventory_item_detail iid,product_option_value pov,product_option po
                          ,product p,map_product_inventory_item mpii
                          where inventory_id = iid.fk_inventory_item
                          and iid.fk_product_option_values = product_option_value_id
