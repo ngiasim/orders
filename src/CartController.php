@@ -29,7 +29,7 @@ class CartController extends Controller
 			$option["invsku"] = $input['invsku'];
 			$option["invId"] = $input['invId'];
 			Cart::add($products[0]->product_id,$products[0]->productsDescription->products_name, 1, $products[0]->base_price,$option);
-		 	$cartItems = Cart::content();
+			$cartItems = Cart::content();
 		 	$total = Cart::total();
 			$total_tax = Cart::tax();
 		 	$cartView = \View::make('cart::index', array("cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();

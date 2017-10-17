@@ -18,85 +18,102 @@
                <td>{{$row->productsDescription['products_description']}}</td>
                <td>
 
-
                  @foreach($cook_atributes_product[$row->products_sku] as $r => $v)
-                  <select id="{{$row->product_id}}-Size" name="{{$row->product_id}}-{{$r}}" onChange="showColors('{{$row->product_id}}',this.options[this.selectedIndex].value,'{{$row->products_sku}}');">
-                    @foreach($v as $key => $val)
-                        <option value={{$val}}>{{$val}}</option>
-                    @endforeach
+                  @if ($loop->iteration === 1)
+                      <select id="{{$row->product_id}}-{{$r}}" name="{{$row->product_id}}-{{$r}}" onChange="showAttribute('{{$loop->iteration - 1}}','{{count($product_options[$row->products_sku])}}','{{$r}}','{{$product_options[$row->products_sku][$loop->iteration]}}','{{$row->product_id}}',this.options[this.selectedIndex].value,'{{$row->products_sku}}');">
+                          <option value="">Select {{$r}}</option>
+                          @foreach($v as $key => $val)
+                              <option value={{$val}}>{{$val}}</option>
+                          @endforeach
+                      </select>
+                  @elseif ($loop->iteration < count($cook_atributes_product[$row->products_sku]))
+                      <select id="{{$row->product_id}}-{{$r}}" style="display:none;" name="{{$row->product_id}}-{{$r}}" onChange="showAttribute('{{$loop->iteration - 1}}','{{count($product_options[$row->products_sku])}}','{{$r}}','{{$product_options[$row->products_sku][$loop->iteration]}}','{{$row->product_id}}',this.options[this.selectedIndex].value,'{{$row->products_sku}}');">
+                      </select>
+                  @else
+                  <select id="{{$row->product_id}}-{{$r}}" style="display:none;" name="{{$row->product_id}}-{{$r}}" onChange="setInventory('{{$row->product_id}}','{{$row->products_sku}}');">
                   </select>
-                  @break
+                  @endif
+
                   @endforeach
                   <!-- <div id="{{$row->product_id}}-colors"></div> -->
-                    <select id="{{$row->product_id}}-colors" name="{{$row->product_id}}-colors" onChange="">
-                    </select>
+                    <!-- <select id="{{$row->product_id}}-colors" name="{{$row->product_id}}-colors" onChange="">
+                    </select> -->
                </td>
                <td>{{$row->base_price}}</td>
-       	       <td><button type='button' onclick="setInventory('{{$row->product_id}}','{{$row->products_sku}}');addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td>
+       	       <!-- <td><button type='button' onclick="setInventory('{{$row->product_id}}','{{$row->products_sku}}');addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td> -->
+               <td><button type='button' onclick="addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td>
               </tr>
       @endforeach
       </tbody>
 </table>
 <script>
    var json_arr = <?php echo $json_cook_atributes_product; ?>;
-
+   var productattr = <?php echo json_encode($product_options); ?>;
+   //console.log(json_arr);
    function setInventory(product_id,productsku)
    {
-         //console.log(productsku);
-         size  = $("#"+product_id+"-Size").val();
-         color = $("#"+product_id+"-colors").val();
-         console.log(size);
-         console.log(color);
 
-         for (var key in json_arr) {
-           if (key == productsku)
-           {
-             for (var key2 in json_arr[key]) {
-               if (json_arr[key][key2]['options']['Size'] == size)
+             var matchcount = 0;
+             for (var key in json_arr) {
+               if (key == productsku)
                {
-                 if(json_arr[key][key2]['options']['Color'] == color);
-                 {
-                   console.log("ff"+json_arr[key][key2]['options']['Color']);
-                   console.log(key2);
-                   console.log(json_arr[key][key2]['inventory_id']);
-                   $("#"+product_id+"-invsku").val(key2);
-                   $("#"+product_id+"-invId").val(json_arr[key][key2]['inventory_id']);
-                  break;
-                 }
+                 for (var key2 in json_arr[key]) {
 
+                          var search = true;
+                          for (var key4 in json_arr[key][key2]['options']) {
+                            for (var innerkey in productattr[productsku]) {
+                                 if (json_arr[key][key2]['options'][productattr[productsku][innerkey]] == $("#"+product_id+"-"+productattr[productsku][innerkey]).val())
+                                 {
+                                   search = true;
+                                 }else{
+                                   search = false;
+                                 }
+
+                            }
+                          }
+
+                            if(search) //(json_arr[key][key2]['options'][productattr[productsku][0]] == $("#"+product_id+"-"+'Size').val() && json_arr[key][key2]['options'][productattr[productsku][1]] == $("#"+product_id+"-"+'Color').val() )
+                            {
+                               console.log("kkkkkkk"+json_arr[key][key2]['options'][productattr[productsku][0]]);
+                               //console.log("hhhhh::"+key2);
+                               $("#"+product_id+"-invsku").val(key2);
+                               $("#"+product_id+"-invId").val(json_arr[key][key2]['inventory_id']);
+                              //matchcount= matchcount + 1;
+                              return false;
+                            }
+                 }
                }
              }
-           }
-         }
    }
 
-   function showColors(productId,val,productsku)
+   function showAttribute(currentIndex,attrCount,Currentattribute,Nextattribute,productId,val,productsku)
    {
-
-      $("#"+productId+"-colors option").remove();
+      $("#"+productId+"-"+Nextattribute+" option").remove();
       var colors = [];
-
-
        for (var key in json_arr) {
          if (key == productsku)
          {
            for (var key2 in json_arr[key]) {
-             if (json_arr[key][key2]['options']['Size'] == val)
+             if (json_arr[key][key2]['options'][Currentattribute] == val)
              {
-               colors.push(json_arr[key][key2]['options']['Color']);
+               //console.log("inloop::"+json_arr[key][key2]['options'][Nextattribute]);
+               colors.push(json_arr[key][key2]['options'][Nextattribute]);
 
              }
            }
          }
        }
-
+       console.log(colors);
+       var option = $('<option/>');
+       option.attr({ 'value': '' }).text("Select "+Nextattribute);
+       $("#"+productId+"-"+Nextattribute).append(option);
        for (var op in colors) {
          var option = $('<option/>');
          option.attr({ 'value': colors[op] }).text(colors[op]);
-         $("#"+productId+"-colors").append(option);
+         $("#"+productId+"-"+Nextattribute).append(option);
 
        }
-       $("#"+productId+"-colors").append(option);
+       $("#"+productId+"-"+Nextattribute).show();
 
    }
 

@@ -35,7 +35,7 @@ class OrderController extends Controller
   {
 
     // $products =  Product::with(array('productsDescription' => function($query) {
-    //       $query->where('products_name', 'like','%Jacket%')->orwhere('product_id', '=', "Jacket");
+    //       $query->select('id','username')->where('products_name', 'like','%Jacket%')->orwhere('product_id', '=', "Jacket");
     //    }))->get();
     //$products =  Product::where('product_id', '=', $id)->orWhere('meta_keywords','like','%'.$id.'%')->with('productsDescription')->get();
     $products =  Product::where('product_id', '=', $id)
@@ -43,6 +43,18 @@ class OrderController extends Controller
     ->with('productsDescription')
     ->with('ProductAttribute')
     ->limit(10)->get();
+
+  //dd($products);
+  foreach ($products as $p ) {
+
+    foreach ($p->ProductAttribute as $o ) {
+      $productOptionObj = ProductOption::find($o->fk_product_option);
+
+      $product_options[$p->products_sku][] = $productOptionObj->display_name;
+    }
+  }
+
+  //dd($product_options);
 
      foreach ($products as $option ) {
        $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name
@@ -73,8 +85,9 @@ class OrderController extends Controller
         }
 
      }
-
-    $productView = \View::make('orders::productlisting', array("products"=>$products,"cook_atributes_product"=>$cook_atributes_product,"json_cook_atributes_product"=>json_encode($json_cook_atributes_product)))->render();
+//dd($json_cook_atributes_product);
+//dd($cook_atributes_product);
+    $productView = \View::make('orders::productlisting', array("products"=>$products,"cook_atributes_product"=>$cook_atributes_product,"json_cook_atributes_product"=>json_encode($json_cook_atributes_product),"product_options"=>$product_options))->render();
     $data = array(
         "productView" => $productView
     );
