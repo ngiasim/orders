@@ -19,7 +19,7 @@ class Order extends Model
 
 		public function orderItem()
 	 	{
-			 return $this->hasMany('App\OrderItem', 'fk_order', 'order_id');
+			 return $this->hasMany('App\Models\OrderItem', 'fk_order', 'order_id');
 	 	}
 
 		public function getOrdersByFilters($filter) {
