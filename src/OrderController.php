@@ -31,7 +31,7 @@ class OrderController extends Controller
               $query->with('productOptionValue');
         }))->get();
 
-       dd($inventoryObj);
+       //dd($inventoryObj);
        $cartItems = Cart::content();
        $total = Cart::total();
        $total_tax = Cart::tax();

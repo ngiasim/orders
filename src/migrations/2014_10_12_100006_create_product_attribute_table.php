@@ -11,7 +11,7 @@ class CreateProductAttributeTable extends Migration
      *
      * @return void
      */
-     
+
     public function up()
     {
         Schema::create('product_attribute', function (Blueprint $table) {
@@ -22,8 +22,8 @@ class CreateProductAttributeTable extends Migration
             $table->integer('created_by')->default('0');
             $table->integer('updated_by')->default('0');
             $table->integer('deleted_by')->default('0');
-            $table->foreign('fk_product')->references('product_id')->on('product');
-            $table->foreign('fk_product_option')->references('product_option_id')->on('product_option');
+            //$table->foreign('fk_product')->references('product_id')->on('product');
+            //$table->foreign('fk_product_option')->references('product_option_id')->on('product_option');
             $table->timestamps();
         });
     }
