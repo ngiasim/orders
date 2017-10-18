@@ -15,6 +15,8 @@ use App\Models\OrderItem;
 use App\Models\ProductOption;
 use App\Models\ProductAttribute;
 use App\Models\ProductOptionValue;
+use App\Models\InventoryItem;
+use App\Models\InventoryItemDetail;
 use DB;
 
 class OrderController extends Controller
@@ -23,6 +25,13 @@ class OrderController extends Controller
   public function phoneOrder()
   {
        //dd(\Session::all());
+       $inventoryObj = InventoryItem::where('inventory_id', '=', 8)
+       ->with(array('inventoryItemDetail' => function($query) {
+              $query->with('productOption');
+              $query->with('productOptionValue');
+        }))->get();
+
+       dd($inventoryObj);
        $cartItems = Cart::content();
        $total = Cart::total();
        $total_tax = Cart::tax();
@@ -57,31 +66,32 @@ class OrderController extends Controller
   //dd($product_options);
 
      foreach ($products as $option ) {
-       $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name
-                         from inventory_item ii,inventory_item_detail iid,product_option_value pov,product_option po
-                         ,product p,map_product_inventory_item mpii
-                         where inventory_id = iid.fk_inventory_item
-                         and iid.fk_product_option_values = product_option_value_id
-                         and iid.fk_product_option = product_option_id
-                         and mpii.fk_inventory_item = ii.inventory_id
-                         and product_id = mpii.fk_product
-                         and product_id ='.$option->product_id);
+       $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name,
+        (qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty
+        from inventory_item ii,inventory_item_detail iid,product_option_value pov,product_option po
+        ,product p,map_product_inventory_item mpii
+        where inventory_id = iid.fk_inventory_item
+        and iid.fk_product_option_values = product_option_value_id
+        and iid.fk_product_option = product_option_id
+        and mpii.fk_inventory_item = ii.inventory_id
+        and product_id = mpii.fk_product
+        and product_id ='.$option->product_id);
        //dd($products_attributes);
         $json_cook_atributes_product ;
         $cook_atributes_product ;
         foreach ($products_attributes as $pa ) {
+          //echo $pa->qty."<br>";
+          if ($pa->qty > 0){
           //$cook_atributes_product[$option->products_sku][$option->name]
-          foreach ($option->ProductAttribute as $inneratribute ) {
-
-              if($pa->product_option_id == $inneratribute->fk_product_option){
-                   $cook_atributes_product[$pa->products_sku][$pa->option_name][]=$pa->name;
+              foreach ($option->ProductAttribute as $inneratribute ) {
+                  if($pa->product_option_id == $inneratribute->fk_product_option){
+                       $cook_atributes_product[$pa->products_sku][$pa->option_name][]=$pa->name;
+                  }
               }
-          }
-          $cook_atributes_product[$pa->products_sku][$pa->option_name] = array_unique($cook_atributes_product[$pa->products_sku][$pa->option_name]);
-
-
-          $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["options"][$pa->option_name]=$pa->name;
-          $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_id"] = $pa->inventory_id;
+              $cook_atributes_product[$pa->products_sku][$pa->option_name] = array_unique($cook_atributes_product[$pa->products_sku][$pa->option_name]);
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["options"][$pa->option_name]=$pa->name;
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_id"] = $pa->inventory_id;
+           }
         }
 
      }

@@ -41,7 +41,7 @@
                </td>
                <td>{{$row->base_price}}</td>
        	       <!-- <td><button type='button' onclick="setInventory('{{$row->product_id}}','{{$row->products_sku}}');addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td> -->
-               <td><button type='button' onclick="addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td>
+               <td><button type='button' id="{{$row->product_id}}-add" name="{{$row->product_id}}-add" style="display:none;" onclick="addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td>
               </tr>
       @endforeach
       </tbody>
@@ -78,12 +78,14 @@
                                //console.log("hhhhh::"+key2);
                                $("#"+product_id+"-invsku").val(key2);
                                $("#"+product_id+"-invId").val(json_arr[key][key2]['inventory_id']);
+                               $("#"+product_id+"-add").show();
                               //matchcount= matchcount + 1;
                               return false;
                             }
                  }
                }
              }
+
    }
 
    function showAttribute(currentIndex,attrCount,Currentattribute,Nextattribute,productId,val,productsku)
