@@ -5,10 +5,10 @@ namespace Ngiasim\Orders;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
-use App\Product;
-use App\Product_description;
-use App\Language;
-use App\Product_status;
+use App\Models\Product;
+use App\Models\Product_description;
+use App\Models\Language;
+use App\Models\Product_status;
 use App\User;
 
 class CartController extends Controller

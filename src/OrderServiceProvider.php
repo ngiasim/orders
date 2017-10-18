@@ -28,7 +28,7 @@ class OrderServiceProvider extends ServiceProvider
         // _DIR_ . '/migrations' => $this->app->databasePath() . '/migrations'
         // ], 'migrations');
         $this->publishes([
-        __DIR__.'/models' => base_path('app'),
+        __DIR__.'/models' => base_path('app/Models'),
         ]);
     }
 

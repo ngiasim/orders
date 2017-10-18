@@ -5,16 +5,16 @@ namespace Ngiasim\Orders;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Gloudemans\Shoppingcart\Facades\Cart;
-use App\Product;
-use App\Product_description;
-use App\Language;
-use App\Product_status;
+use App\Models\Product;
+use App\Models\Product_description;
+use App\Models\Language;
+use App\Models\Product_status;
 use App\User;
-use App\Order;
-use App\OrderItem;
-use App\ProductOption;
-use App\ProductAttribute;
-use App\ProductOptionValue;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\ProductOption;
+use App\Models\ProductAttribute;
+use App\Models\ProductOptionValue;
 use DB;
 
 class OrderController extends Controller
