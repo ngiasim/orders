@@ -26,7 +26,6 @@ class Order extends Model
 
 			$data = $this->orderBy('order_id','DESC');
 
-			
 		  if(count($filter))
 		  {
 			   if(!empty($filter['customer_id']))
@@ -35,7 +34,8 @@ class Order extends Model
 			   }
 
 		  }
-				return $data->get();
+	
+				return $data;
 
 			  // return $this->all();
 		}

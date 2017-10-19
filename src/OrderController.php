@@ -184,7 +184,8 @@ class OrderController extends Controller
 
     public function index(Request $request){
 
-         $input = $request->all();
+    
+        /* $input = $request->all();
          $order = new Order();
          $filter = Array();
         //  if ($input['customer_id'])
@@ -194,8 +195,47 @@ class OrderController extends Controller
          //dd($input['customer_id']);
          $orders = $order->getOrdersByFilters($input);
         //$orders = Order::all();
+      
+        return view('orders::listview',['orders'=>$orders]);*/
+   
+        return view('orders::listview');
+      
+    }    public function getOrders (Request $request)
+    {
+    	
 
-        return view('orders::listview',['orders'=>$orders]);
+    	$input = $request->all();
+    	$order = new Order();
+   
+    	$orders = $order->getOrdersByFilters($input);
+    	$response = $this->makeDatatable($orders);
+    	return  $response;
+    }
+    public function makeDatatable($data)
+    {
+    	return \DataTables::of($data)
+    
+
+    	->addColumn('id', function ($order) {
+    		$return = $order->order_id;
+    		return $return;
+    	})
+
+    	->addColumn('order_date', function ($order) {
+    		$return = '<td><a href="/order/'.$order->order_id.'">'.\Carbon\Carbon::parse($order->created_at)->toDayDateTimeString().'</a></td>';
+    		return $return;
+    		 
+    	})
+    	->addColumn('customer_email', function ($order) {
+    		//$return = $order['user']->email;
+    		$return = "";
+    		return $return;
+    	})
+    	->addColumn('action', function ($order) {
+    		$return = '<td><a href="/order/'.$order->order_id.'"><i class="fa fa-search-plus"></i></a></td>';
+    		return $return;
+    		 
+    	}) ->rawColumns(['order_date', 'action'])->make(true);
     }
 
     public function viewOrder($orderId){
