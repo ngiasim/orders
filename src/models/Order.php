@@ -26,6 +26,7 @@ class Order extends Model
 
 			$data = $this->orderBy('order_id','DESC');
 
+			
 		  if(count($filter))
 		  {
 			   if(!empty($filter['customer_id']))
