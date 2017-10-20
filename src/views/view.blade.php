@@ -41,9 +41,9 @@
 <div class="main-center-area">
     <div class="row">
           <div class="page-header admin-header">
-              <h3 id="page-title">Order #2356</h3>
+              <h3 id="page-title">Order #{{$order->order_id}}</h3>
               <div class="order-heading-info">
-                   Created By <span>Muhammad Fahim</span> on October 18, 2017 12:12:12 A.M
+                   Created By <span>Muhammad Fahim</span> on {{\Carbon\Carbon::parse($order->created_at)->toDayDateTimeString() }}
               </div>
           </div>
      </div>
@@ -1590,10 +1590,6 @@
                                                        <div class="col-md-3 font-size-11">0.00</div>
                                                   </div>
                                              
-                                                     <div class="row">
-                                                       <div class="col-md-6 font-size-11">DISCOUNTS :</div> 
-                                                       <div class="col-md-3 font-size-11">0.00</div>
-                                                  </div>
                                                           <div class="row">
                                                        <div class="col-md-6 font-size-11">Tax :</div> 
                                                        <div class="col-md-3 font-size-11">{{$order->tax}}</div>

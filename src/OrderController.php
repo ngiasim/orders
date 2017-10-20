@@ -275,7 +275,7 @@ class OrderController extends Controller
         $user = new User();
         $input['customer_id'] = $order->fk_customer;
         
-        $custumerData = $user->customerQuery($input);
+        $custumerData = $user->customerQuery($input)->get();
         return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0]]);
     }
 
