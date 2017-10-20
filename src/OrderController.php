@@ -12,6 +12,7 @@ use App\Models\Product_status;
 use App\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderStatus;
 use App\Models\ProductOption;
 use App\Models\ProductAttribute;
 use App\Models\ProductOptionValue;
@@ -21,74 +22,15 @@ use DB;
 
 class OrderController extends Controller
 {
-  /*public function combinations($arrays, $i = 0) {
-      if (!isset($arrays[$i])) {
-          return array();
-      }
-      if ($i == count($arrays) - 1) {
-          return $arrays[$i];
-      }
-
-      // get combinations from subsequent arrays
-      $tmp = $this->combinations($arrays, $i + 1);
-
-      $result = array();
-
-      // concat each array from tmp with each element from $arrays[$i]
-      foreach ($arrays[$i] as $v) {
-          foreach ($tmp as $t) {
-              $result[] = is_array($t) ?
-                  array_merge(array($v), $t) :
-                  array($v, $t);
-          }
-      }
-
-      return $result;
-  }*/
 
   public function phoneOrder()
   {
        //dd(\Session::all());
-
-      /* $id = 1;
-         $product_option = Product::where('product_id', '=', $id)
-       ->with(array('ProductAttribute' => function($query) {
-             $query->with(array('productOption' => function($query2) {
-               $query2->with('productOptionValue');
-            }));
-         }))
-         ->get();
-
-
-       $displayAttribite;
-       foreach ($product_option as $product ) {
-         foreach ($product->ProductAttribute as $pa){
-        $displayAttribite[$product->product_id][] =  $pa->productOption->productOptionValue;
-       }
-     }
-
-     $final;
-     foreach ($displayAttribite as $key1 => $val1){
-       foreach ($val1 as $key2 => $val2){
-         foreach ($val2 as $key3 => $val3){
-            $inner[$key3] =  $val3->display_name;
-          }
-          $inner1[$key2]=$inner;
-       }
-       //$final[$key1]=$inner1;
-     }
-
-       //dd($inner1);
-        echo "<pre>";
-        print_r(
-            $this->combinations($inner1)
-        );
-        dd();
-         $inventoryObj = InventoryItem::where('inventory_id', '=', 8)
-         ->with(array('inventoryItemDetail' => function($query) {
-                $query->with('productOption');
-                $query->with('productOptionValue');
-          }))->get();*/
+       $inventoryObj = InventoryItem::where('inventory_id', '=', 8)
+       ->with(array('inventoryItemDetail' => function($query) {
+              $query->with('productOption');
+              $query->with('productOptionValue');
+        }))->get();
 
        //dd($inventoryObj);
        $cartItems = Cart::content();
@@ -243,7 +185,8 @@ class OrderController extends Controller
 
     public function index(Request $request){
 
-         $input = $request->all();
+    
+        /* $input = $request->all();
          $order = new Order();
          $filter = Array();
         //  if ($input['customer_id'])
@@ -251,9 +194,10 @@ class OrderController extends Controller
         //    $filter['customer_id'] = $input['customer_id'];
         //  }
          //dd($input['customer_id']);
-        // $orders = $order->getOrdersByFilters($input);
-        //$orders = Order::all();*/
-		
+         $orders = $order->getOrdersByFilters($input);
+        //$orders = Order::all();
+      
+        return view('orders::listview',['orders'=>$orders]);*/
         $statuses = OrderStatus::pluck('status_name','order_status_id')->toArray();
         return view('orders::listview',['order_statuses'=>$statuses]);
       
@@ -281,6 +225,10 @@ class OrderController extends Controller
     		if($order->orders_source == "p")
     		{
     			$return ="Phone";
+    		}
+    		else if($order->orders_source == "p")
+    		{
+    			$return ="Stor";
     		}
     		//$return = $order->orders_source;
     		return $return;
@@ -316,16 +264,19 @@ class OrderController extends Controller
     		return $return;
 	 
     	})->rawColumns(['id','customer_name', 'action'])->make(true);
-
     }
 
     public function viewOrder($orderId){
         $order = Order::find($orderId);
+        
+   
         //get customer detail
         //order detail
-      
-
-        return view('orders::view',['order'=>$order]);
+        $user = new User();
+        $input['customer_id'] = $order->fk_customer;
+        
+        $custumerData = $user->customerQuery($input);
+        return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0]]);
     }
 
 
