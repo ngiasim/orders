@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use App\Models\Product;
+use App\Models\Country;
 use App\Models\Product_description;
 use App\Models\Language;
 use App\Models\Product_status;
@@ -267,14 +268,14 @@ class OrderController extends Controller
 
     public function viewOrder($orderId){
         $order = Order::with(['billingAddress','shippingAddress'])->find($orderId);
-
+         $country = Country::pluck('name','country_id')->toArray();
         //get customer detail
         //order detail
         $user = new User();
         $input['customer_id'] = $order->fk_customer;    
         $custumerData = $user->customerQuery($input)->get();
         // get address details
-        return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0]]);
+        return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country]);
     }
 
 
