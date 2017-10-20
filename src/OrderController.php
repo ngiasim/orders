@@ -197,17 +197,17 @@ class OrderController extends Controller
 
          $orders = $order->getOrdersByFilters($input);
         //$orders = Order::all();
-      
+
         return view('orders::listview',['orders'=>$orders]);*/
-        
-       
+
+
         $statuses = OrderStatus::pluck('status_name','order_status_id')->toArray();
         return view('orders::listview',['order_statuses'=>$statuses,'inputData'=>$input]);
-      
-    }    
+
+    }
     public function getOrders (Request $request)
     {
-    	
+
 
     	$input = $request->all();
     	$order = new Order();
@@ -243,6 +243,7 @@ class OrderController extends Controller
     	->addColumn('order_date', function ($order) {
     		$return = \Carbon\Carbon::parse($order->created_at)->toDayDateTimeString();
     		return $return;
+        })
     	->addColumn('customer_name', function ($order) {
     		$name = "";
     		if(isset($order['user']->first_name))
@@ -259,11 +260,11 @@ class OrderController extends Controller
     	})
     	->addColumn('action', function ($order) {
     		$return = '<td><a href="/order/'.$order->order_id.'"><i class="fa fa-search-plus"></i></a></td>';
-    		return $return;	 
+    		return $return;
     	})->addColumn('customer_no', function ($order) {
     		$return = isset($order['customer']->contact_no)?$order['customer']->contact_no:"";
     		return $return;
-	 
+
     	})->rawColumns(['id','customer_name', 'action'])->make(true);
     }
 
@@ -272,7 +273,7 @@ class OrderController extends Controller
         //get customer detail
         //order detail
         $user = new User();
-        $input['customer_id'] = $order->fk_customer;    
+        $input['customer_id'] = $order->fk_customer;
         $custumerData = $user->customerQuery($input)->get();
         // get address details
         return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0]]);
