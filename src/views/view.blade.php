@@ -142,7 +142,7 @@
      <!-- Customer Info Code row End Above -->
 
      <!-- Order Info Code row Start Below -->
-     <div class="row">
+     {{--<div class="row">
           <!-- Order Info Code Start Below -->
           <div class="panel panel-primary">
                <div class="panel-heading">
@@ -249,7 +249,7 @@
                </div>
           </div>
           <!-- Order Info Code End Above -->
-     </div>
+     </div> --}}
      <!-- Order Info Code row End Above -->
 
      <!-- Shipping/Billing Detail Code row Start Below -->
@@ -1035,7 +1035,7 @@
      <!-- Shipping/Billing Detail Code row End Above -->
 
      <!-- Comments History Code row Start Below -->
-     <div class="row">
+    {{-- <div class="row">
           <div class="panel panel-primary">
                <div class="panel-heading">
                     <h3 class="panel-title">Comments History</h3>
@@ -1135,7 +1135,7 @@
                     </form>
                </div>
           </div>
-     </div>
+     </div> --}}
      <!-- Comments History Code row Start Below -->
 
      <!-- Item Orders Code row Start Below -->
@@ -1428,8 +1428,8 @@
                                              </colgroup>
                                              <thead class="">
                                                   <tr>
-                                                       <th>Ship Qty</th>
-                                                       <th>Item #</th>
+                                                      <th>Ship Qty</th> 
+                                                        <th>Item #</th>
                                                        <th>Image</th>
                                                        <th>Name</th>
                                                        <th>Order/<br />Ship Qty</th>
@@ -1443,7 +1443,7 @@
                                               @foreach($order->orderItem as $item)
                          						<tr>
                                                    
-                                                       <td>
+                                                      <td>
                                                             <div class="col-md-12 control-label no-padding">
                                                                  <select name="country" id="country" class="form-control" tabindex="41" style="font-size: 9px;">
                                                                       <option value="0" label="Ship Qty … " selected="selected">Ship Qty …</option>
@@ -1451,7 +1451,7 @@
                                                                       <option value="" label="2">2</option>
                                                                  </select>
                                                             </div>
-                                                       </td>
+                                                       </td> 
                                                        <td>
                                                             <div class="col-md-12 control-label no-padding">
                                                                  <select name="country" id="country" class="form-control" tabindex="42" style="font-size: 9px;">
@@ -1468,7 +1468,7 @@
                                                                 <!--   <input type="button" class="btn btn-primary" value="Edit"><br />
                                                                  <button class="btn btn-primary">Edit</button> -->
                                                             </div>
-                                                       </td>
+                                                       </td> 
                                                        <td>
                                                             <img src="https://i.pinimg.com/736x/b3/5d/c6/b35dc64be219dd383c5322d2d5203a95--mens-leather-bomber-jacket-biker-leather.jpg" alt="" class="img-responsive">
                                                        </td>
@@ -1591,11 +1591,11 @@
                                                   </div>
                                              
                                                           <div class="row">
-                                                       <div class="col-md-6 font-size-11">Tax :</div> 
+                                                       <div class="col-md-6 font-size-11">TAX :</div> 
                                                        <div class="col-md-3 font-size-11">{{$order->tax}}</div>
                                                   </div>
                                                   <div class="row">
-                                                       <div class="col-md-6 font-size-11">Shipping :</div> 
+                                                       <div class="col-md-6 font-size-11">SHIPPING :</div> 
                                                        <div class="col-md-3 font-size-11">free</div>
                                                   </div>
                                              </div>

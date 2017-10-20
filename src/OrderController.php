@@ -185,7 +185,7 @@ class OrderController extends Controller
 
     public function index(Request $request){
 
-    
+    	$input = $request->all();
         /* $input = $request->all();
          $order = new Order();
          $filter = Array();
@@ -198,8 +198,10 @@ class OrderController extends Controller
         //$orders = Order::all();
       
         return view('orders::listview',['orders'=>$orders]);*/
+        
+       
         $statuses = OrderStatus::pluck('status_name','order_status_id')->toArray();
-        return view('orders::listview',['order_statuses'=>$statuses]);
+        return view('orders::listview',['order_statuses'=>$statuses,'inputData'=>$input]);
       
     }    
     public function getOrders (Request $request)
@@ -268,14 +270,12 @@ class OrderController extends Controller
 
     public function viewOrder($orderId){
         $order = Order::find($orderId);
-        
-   
         //get customer detail
         //order detail
         $user = new User();
-        $input['customer_id'] = $order->fk_customer;
-        
+        $input['customer_id'] = $order->fk_customer;    
         $custumerData = $user->customerQuery($input)->get();
+        // get address details
         return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0]]);
     }
 
