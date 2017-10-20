@@ -16,6 +16,10 @@
                          {!! Form::text('order_id', null, array('placeholder' => 'Order Id','class' => 'form-control')) !!}
 
                         </div>
+                           <div class="form-group">
+                         {!! Form::hidden('customer_id', isset($inputData['customer_id'])?$inputData['customer_id']:"", array('placeholder' => 'Customer Id','class' => 'form-control')) !!}
+
+                        </div>
                         	<div class="form-group">
                				{!! Form::select('order_source',[""=>'All order']+['p'=>'Phone','s'=>'Store'],'',array('class' => 'form-control')) !!}
                      
@@ -68,9 +72,7 @@
     </div>
 @endsection
 @section('script')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
-    <script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+    
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -87,12 +89,14 @@ $(document).ready(function() {
                d.contact_no = $('input[name=contact_no]').val();
                d.source = $('input[name=source]').val();
                d.customer = $('input[name=customer]').val();
+               d.customer_id = $('input[name=customer_id]').val();
             }
         },
         columns: [
 			{data: 'id', name: 'id', "orderable": false},
             {data: 'customer_name', name: 'customer_name'},
             {data: 'customer_no', name: 'customer_no'},
+            
             {data: 'status', name: 'status'},
             {data: 'order_source', name: 'order_source'},
             {data: 'order_date', name: 'order_date'},
