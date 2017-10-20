@@ -272,35 +272,40 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">First Name:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="First Name" class="form-control input-md" maxlength="" tabindex="13">
+                                           {!! Form::text('first_name', $order['shippingAddress']->first_name, array('placeholder' => 'First Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"13")) !!}
+                                         
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Last Name:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="Last Name" class="form-control input-md" maxlength="" tabindex="14">
+                                          {!! Form::text('last_name', $order['shippingAddress']->last_name, array('placeholder' => 'Last Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"14")) !!}
+                                            
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Company:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="Company" class="form-control input-md" maxlength="" tabindex="15">
+                                          {!! Form::text('company',null, array('placeholder' => 'Company','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"15")) !!}
+                                         
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Street Address 1:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="Street Address 1" class="form-control input-md" maxlength="" tabindex="16">
+                                          {!! Form::text('line1', $order['shippingAddress']->line1, array('placeholder' => 'Street Address 1','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"16")) !!}
+                                          
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Street Address 2:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="Street Address 2" class="form-control input-md" maxlength="" tabindex="17">
+                                          {!! Form::text('line2', $order['shippingAddress']->line2, array('placeholder' => 'Street Address 2','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"17")) !!}
+                                           
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
@@ -580,28 +585,32 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">City Town:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="City Town" class="form-control input-md" maxlength="" tabindex="19">
+                                          {!! Form::text('city', $order['shippingAddress']->city, array('placeholder' => 'City','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"19")) !!}
+                                        
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">State/Province:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="State/Province" class="form-control input-md" maxlength="" tabindex="20">
+                                          {!! Form::text('state',$order['shippingAddress']->state, array('placeholder' => 'State','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"20")) !!}
+
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Contact #:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="number" placeholder="Contact #" class="form-control input-md" maxlength="" tabindex="21">
+                                          {!! Form::text('phone1',$order['shippingAddress']->phone1, array('placeholder' => 'Contact #','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"21")) !!}
+
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Email Address:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="email" placeholder="Email Address" class="form-control input-md" maxlength="" tabindex="22">
+                                          {!! Form::email('email', $order['shippingAddress']->email, array('placeholder' => 'Email','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"22")) !!}
+                                        
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
@@ -647,35 +656,40 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">First Name:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="First Name" class="form-control input-md" maxlength="" tabindex="24">
+                                           {!! Form::text('first_name', $order['billingAddress']->first_name, array('placeholder' => 'First Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"24")) !!}
+                                           
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Last Name:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="Last Name" class="form-control input-md" maxlength="" tabindex="25">
+                                               {!! Form::text('last_name', $order['billingAddress']->last_name, array('placeholder' => 'Last Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"25")) !!}
+                                            
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Company:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="Company" class="form-control input-md" maxlength="" tabindex="26">
+                                        		    {!! Form::text('company',null, array('placeholder' => 'Company','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"26")) !!}
+											
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Street Address 1:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="Street Address 1" class="form-control input-md" maxlength="" tabindex="27">
+                                        	  {!! Form::text('line1', $order['billingAddress']->line1, array('placeholder' => 'Street Address 1','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"27")) !!}
+												  
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Street Address 2:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="Street Address 2" class="form-control input-md" maxlength="" tabindex="28">
+                                           {!! Form::text('line2', $order['billingAddress']->line2, array('placeholder' => 'Street Address 2','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"28")) !!}
+													  
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
@@ -955,28 +969,30 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">City Town:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="City Town" class="form-control input-md" maxlength="" tabindex="30">
+											{!! Form::text('city', $order['billingAddress']->city, array('placeholder' => 'City','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"30")) !!}
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">State/Province:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="text" placeholder="State/Province" class="form-control input-md" maxlength="" tabindex="31">
+                                           {!! Form::text('state',$order['billingAddress']->state, array('placeholder' => 'State','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"31")) !!}
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Contact #:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="number" placeholder="Contact #" class="form-control input-md" maxlength="" tabindex="32">
+                                        
+										{!! Form::text('phone1',$order['billingAddress']->phone1, array('placeholder' => 'Contact #','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"32")) !!}
+                                         
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Email Address:</label>
                                         <div class="col-md-8">
-                                             <input id="" name="" type="email" placeholder="Email Address" class="form-control input-md" maxlength="" tabindex="33">
+                                          {!! Form::email('email', $order['billingAddress']->email, array('placeholder' => 'Email','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"33")) !!}
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
