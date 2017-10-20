@@ -45,17 +45,17 @@
         </div>    
      
 
-        <div class="col-md-8">
+        <div class="">
             <table class="table table-striped" id="order_table">
                 <thead>
                 <tr>
                     <th class="col-sm-2">Order ID</th>
                 
-                     <th class="col-sm-8">Customer </th>
-                     <th class="col-sm-8">Contact #</th>
+                     <th class="col-sm-3">Customer </th>
+                     <th class="col-sm-3">Contact #</th>
          
-                      <th class="col-sm-8">Status</th>
-                      <th class="col-sm-8">Order Source</th>
+                      <th class="col-sm-3">Status</th>
+                      <th class="col-sm-3">Order Source</th>
                          <th class="col-sm-8">Order Date</th>
                           <th class="col-sm-8">Delivery Date</th>
                     <th class="col-sm-2">Action</th>

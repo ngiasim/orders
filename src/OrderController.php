@@ -224,9 +224,9 @@ class OrderController extends Controller
     		$return = "";
     		if($order->orders_source == "p")
     		{
-    			$return ="Phone Order";
+    			$return ="Phone";
     		}
-    		$return = $order->orders_source;
+    		//$return = $order->orders_source;
     		return $return;
     	})
     	->addColumn('delivery_date', function ($order) {
@@ -242,7 +242,7 @@ class OrderController extends Controller
     		$name = "";
     		if(isset($order['user']->first_name))
     		{
-    			$name ='<td><a href="/customers/'.$order['customer']->fk_user.'/edit" target="_blank">'.$order['user']->first_name." ".$order['user']->last_name." < ".$order['user']->email."> </a></td>";
+    			$name ='<td><a href="/customers/'.$order['customer']->fk_user.'/edit" target="_blank">'.$order['user']->first_name." ".$order['user']->last_name." </br> < ".$order['user']->email."> </a></td>";
     		}
     		//$return = $order['user']->email;
     		$return = $name;
@@ -266,6 +266,7 @@ class OrderController extends Controller
         $order = Order::find($orderId);
         //get customer detail
         //order detail
+      
         return view('orders::view',['order'=>$order]);
     }
 
