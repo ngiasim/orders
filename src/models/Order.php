@@ -7,37 +7,75 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 { //check
-	  use SoftDeletes;
+	use SoftDeletes;
     protected $table = 'order';
     protected $primaryKey = "order_id";
 
     //protected $fillable = ['fk_brand','fk_product_status','products_sku','meta_keywords','meta_description'];
 		public function user()
-	  {
+		{
 	       return $this->belongsTo('App\User','fk_customer','users_id');
-	  }
-
+		}
+		public function customer()
+		{
+			return $this->belongsTo('App\Customer', 'fk_customer', 'fk_user');
+		}
+			
+		public function orderStatus()
+		{
+			return $this->belongsTo('App\Models\OrderStatus','fk_order_status','order_status_id');
+		}
 		public function orderItem()
 	 	{
 			 return $this->hasMany('App\Models\OrderItem', 'fk_order', 'order_id');
 	 	}
 
 		public function getOrdersByFilters($filter) {
-
-			$data = $this->orderBy('order_id','DESC');
-
+		  $data = $this->with(array('user','customer','orderStatus'))->orderBy('order_id','DESC');
 		  if(count($filter))
 		  {
 			   if(!empty($filter['customer_id']))
 			   {
 					 $data = $data->where('fk_customer',  '=', $filter['customer_id']);
 			   }
-
+			   
+			   if(!empty($filter['order_id']))
+			   {
+			   	$data = $data->where('order_id', $filter['order_id']);
+			   }
+			   if(!empty($filter['contact_no']))
+			   {
+			 
+			   	$data->whereHas('customer', function($data) use ($filter)
+			   	{
+			   		// Now querying on tableB
+			   		$data = $data->where('contact_no', $filter['contact_no']);
+			   	});
+			   }
+			   
+			   if(!empty($filter['customer']))
+			   {
+			   
+			   	$data->whereHas('user', function($data) use ($filter)
+			   	{
+			   		// Now querying on tableB
+			
+			   		$data = $data->where('users.first_name',  'like', '%'.$filter['customer'].'%')->orWhere('users.last_name',  'like', '%'.$filter['customer'].'%');
+			   		$data = $data->orWhere('users.email', $filter['customer']);
+			   	});
+			   }
+			   if(!empty($filter['status']))
+			   {
+			   	$data = $data->where('fk_order_status', $filter['status']);
+			   }
+			   
+			   if(!empty($filter['order_source']))
+			   {
+			   	$data = $data->where('orders_source', $filter['order_source']);
+			   }
 		  }
-	
-				return $data;
-
-			  // return $this->all();
+		 
+		  return $data->get();
 		}
 
     // public function productsDescription()
