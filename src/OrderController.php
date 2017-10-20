@@ -251,14 +251,80 @@ class OrderController extends Controller
         //    $filter['customer_id'] = $input['customer_id'];
         //  }
          //dd($input['customer_id']);
-         $orders = $order->getOrdersByFilters($input);
-        //$orders = Order::all();
+        // $orders = $order->getOrdersByFilters($input);
+        //$orders = Order::all();*/
 
-        return view('orders::listview',['orders'=>$orders]);
+        $statuses = OrderStatus::pluck('status_name','order_status_id')->toArray();
+        return view('orders::listview',['order_statuses'=>$statuses]);
+
+    }
+    public function getOrders (Request $request)
+    {
+
+
+    	$input = $request->all();
+    	$order = new Order();
+
+    	$orders = $order->getOrdersByFilters($input);
+    	$response = $this->makeDatatable($orders);
+    	return  $response;
+    }
+    public function makeDatatable($data)
+    {
+    	return \DataTables::of($data)
+    	->addColumn('id', function ($order) {
+    		$return = '<td><a href="/order/'.$order->order_id.'">'.$order->order_id.'</a></td>';
+    		return $return;
+    	})
+    	->addColumn('order_source', function ($order) {
+    		$return = "";
+    		if($order->orders_source == "p")
+    		{
+    			$return ="Phone";
+    		}
+    		//$return = $order->orders_source;
+    		return $return;
+    	})
+    	->addColumn('delivery_date', function ($order) {
+    		$return = "";
+    		return $return;
+    	})
+    	->addColumn('order_date', function ($order) {
+    		$return = \Carbon\Carbon::parse($order->created_at)->toDayDateTimeString();
+    		return $return;
+
+    	})
+    	->addColumn('customer_name', function ($order) {
+    		$name = "";
+    		if(isset($order['user']->first_name))
+    		{
+    			$name ='<td><a href="/customers/'.$order['customer']->fk_user.'/edit" target="_blank">'.$order['user']->first_name." ".$order['user']->last_name." </br> < ".$order['user']->email."> </a></td>";
+    		}
+    		//$return = $order['user']->email;
+    		$return = $name;
+    		return $return;
+    	})
+    	->addColumn('status', function ($order) {
+    		$return = $order['orderStatus']->status_name;
+    		return $return;
+    	})
+    	->addColumn('action', function ($order) {
+    		$return = '<td><a href="/order/'.$order->order_id.'"><i class="fa fa-search-plus"></i></a></td>';
+    		return $return;
+    	})->addColumn('customer_no', function ($order) {
+    		$return = isset($order['customer']->contact_no)?$order['customer']->contact_no:"";
+    		return $return;
+
+    	})->rawColumns(['id','customer_name', 'action'])->make(true);
+
     }
 
     public function viewOrder($orderId){
         $order = Order::find($orderId);
+        //get customer detail
+        //order detail
+
+
         return view('orders::view',['order'=>$order]);
     }
 
