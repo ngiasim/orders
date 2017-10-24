@@ -5,13 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Address extends Model
+class Country extends Model
 {
 	//use SoftDeletes;
-    protected $table = 'address';
-    protected $primaryKey = "address_id";
-
-
-
+    protected $table = 'country';
+    protected $primaryKey = "country_id";
 
 }

@@ -20,6 +20,16 @@ class Order extends Model
 		{
 			return $this->belongsTo('App\Customer', 'fk_customer', 'fk_user');
 		}
+		
+		public function billingAddress()
+		{
+			return $this->belongsTo('App\Models\Address','fk_address_billing','address_id');
+		}
+		
+		public function shippingAddress()
+		{
+			return $this->belongsTo('App\Models\Address','fk_address_shipping','address_id');
+		}
 			
 		public function orderStatus()
 		{
