@@ -68,16 +68,27 @@ class OrderController extends Controller
   //dd($product_options);
 
      foreach ($products as $option ) {
-       $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name,
-        (qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty
-        from inventory_item ii,inventory_item_detail iid,product_option_value pov,product_option po
-        ,product p,map_product_inventory_item mpii
-        where inventory_id = iid.fk_inventory_item
-        and iid.fk_product_option_values = product_option_value_id
-        and iid.fk_product_option = product_option_id
-        and mpii.fk_inventory_item = ii.inventory_id
-        and product_id = mpii.fk_product
-        and product_id ='.$option->product_id);
+      $products_attributes =   Product::join('map_product_inventory_item as mpii','mpii.fk_product','product_id')
+      ->join('inventory_item as ii','mpii.fk_inventory_item','ii.inventory_id')
+      ->join('inventory_item_detail as iid','ii.inventory_id','iid.fk_inventory_item')
+      ->join('product_option as po','po.product_option_id','iid.fk_product_option')
+      ->join('product_option_value as pov','iid.fk_product_option_values', 'pov.product_option_value_id')
+      ->where('product_id','=',$option->product_id)
+      ->select('inventory_id','products_sku','inventory_code','product_option_id','po.name as option_name','pov.name',
+       DB::Raw('(qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty'))
+       ->get();
+//dd($products_attributes);
+  // DB::raw('qty_onhand')-DB::raw('qty_reserved')-DB::raw('qty_admin_reserved')+DB::raw('qty_preorder' as qty))
+      //  $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name,
+      //   (qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty
+      //   from inventory_item ii,inventory_item_detail iid,product_option_value pov,product_option po
+      //   ,product p,map_product_inventory_item mpii
+      //   where inventory_id = iid.fk_inventory_item
+      //   and iid.fk_product_option_values = product_option_value_id
+      //   and iid.fk_product_option = product_option_id
+      //   and mpii.fk_inventory_item = ii.inventory_id
+      //   and product_id = mpii.fk_product
+      //   and product_id ='.$option->product_id);
        //dd($products_attributes);
         $json_cook_atributes_product ;
         $cook_atributes_product ;
@@ -197,18 +208,18 @@ class OrderController extends Controller
          //dd($input['customer_id']);
          $orders = $order->getOrdersByFilters($input);
         //$orders = Order::all();
-      
+
         return view('orders::listview',['orders'=>$orders]);*/
-        
-       
+
+
         $statuses = OrderStatus::pluck('status_name','order_status_id')->toArray();
         return view('orders::listview',['order_statuses'=>$statuses,'inputData'=>$input]);
-      
-    }    
+
+    }
     public function getOrders (Request $request)
     {
     	$input = $request->all();
-    	$order = new Order();	
+    	$order = new Order();
     	$orders = $order->getOrdersByFilters($input);
     	$response = $this->makeDatatable($orders);
     	return  $response;
@@ -240,7 +251,7 @@ class OrderController extends Controller
     	->addColumn('order_date', function ($order) {
     		$return = \Carbon\Carbon::parse($order->created_at)->toDayDateTimeString();
     		return $return;
-    		 
+
     	})
     	->addColumn('customer_name', function ($order) {
     		$name = "";
@@ -258,11 +269,11 @@ class OrderController extends Controller
     	})
     	->addColumn('action', function ($order) {
     		$return = '<td><a href="/order/'.$order->order_id.'"><i class="fa fa-search-plus"></i></a></td>';
-    		return $return;	 
+    		return $return;
     	})->addColumn('customer_no', function ($order) {
     		$return = isset($order['customer']->contact_no)?$order['customer']->contact_no:"";
     		return $return;
-	 
+
     	})->rawColumns(['id','customer_name', 'action'])->make(true);
     }
 
@@ -272,7 +283,7 @@ class OrderController extends Controller
         //get customer detail
         //order detail
         $user = new User();
-        $input['customer_id'] = $order->fk_customer;    
+        $input['customer_id'] = $order->fk_customer;
         $custumerData = $user->customerQuery($input)->get();
         // get address details
         return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country]);
