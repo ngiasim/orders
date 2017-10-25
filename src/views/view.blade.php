@@ -57,7 +57,7 @@
                </div>
                <div class="form-outer">
                     <!-- -->
-                    <form class="form-horizontal">
+                    	{!! Form::model($customerData, ['method' => 'PATCH', 'class' => 'form-horizontal form-label-left', 'route' => ['customers.update', $customerData->users_id]]) !!}
                          <fieldset>
 
                               <!-- for Error Message you need to add class 'has-error' with 'form-group'-->
@@ -105,13 +105,14 @@
                                       <div class="form-group col-md-6">
                                    <label class="col-md-4 control-label" for="">Customer Status:</label>
                                    <div class="col-md-8">
-                                    {!! Form::text('status', ($customerData->status == 1)?"Active":"InActive", array('placeholder' => 'Status','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"4")) !!}
+
+                                    {!! Form::select('status',$statuses, $customerData->status, array('class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"4")) !!}
                                        
                                         <!--<span class="help-block">help</span>-->
                                    </div>
                               </div>
                       
-                              <div class="form-group col-md-6">
+                             {{-- <div class="form-group col-md-6">
                                    <label class="col-md-4 control-label" for="">Alt Contact #:</label>
                                    <div class="col-md-8">
                                         <input id="" name="" type="number" placeholder="Alt Contact #" class="form-control input-md" maxlength="" tabindex="9">
@@ -124,16 +125,16 @@
                                         <input id="" name="" type="number" placeholder="Alt Phone #" class="form-control input-md" maxlength="" tabindex="10">
                                         <!--<span class="help-block">help</span>-->
                                    </div>
-                              </div>
+                              </div> --}}
 
                               <!-- Button -->
                               <div class="form-group col-md-12 button-area">
                                    <div class="col-md-1 pull-right">
-                                        <button id="" name="" class="btn btn-primary">Save</button>
+                                   	<button type="submit" class="btn btn-primary" name="from_order" value="{{$order->order_id}}">Save</button>
                                    </div>
                               </div>
                          </fieldset>
-                    </form>
+                  {!! Form::close() !!}
                     <!-- -->
                </div>
           </div>
@@ -264,15 +265,16 @@
                     </div>
                     <div class="form-outer">
                          <!-- -->
-                         <form class="form-horizontal">
+                   {{  Form::open(array('url'=>'saveAddress', 'method' => 'post','class'=>'form-horizontal')) }}	
                               <fieldset>
-
+								<input type="hidden" name="order_id" id="order_id" value="{{$order->order_id}}">
+								<input type="hidden" name="address_id" id="address_id" value="{{$order['shippingAddress']->address_id}}">
                                    <!-- for Error Message you need to add class 'has-error' with 'form-group'-->
                                    <!-- Text input-->
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">First Name:</label>
                                         <div class="col-md-8">
-                                           {!! Form::text('first_name', $order['shippingAddress']->first_name, array('placeholder' => 'First Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"13")) !!}
+                                           {!! Form::text('shipping[first_name]', $order['shippingAddress']->first_name, array('placeholder' => 'First Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"13")) !!}
                                          
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -280,23 +282,16 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Last Name:</label>
                                         <div class="col-md-8">
-                                          {!! Form::text('last_name', $order['shippingAddress']->last_name, array('placeholder' => 'Last Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"14")) !!}
+                                          {!! Form::text('shipping[last_name]', $order['shippingAddress']->last_name, array('placeholder' => 'Last Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"14")) !!}
                                             
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
-                                   <div class="form-group">
-                                        <label class="col-md-4 control-label" for="">Company:</label>
-                                        <div class="col-md-8">
-                                          {!! Form::text('company',null, array('placeholder' => 'Company','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"15")) !!}
-                                         
-                                             <!--<span class="help-block">help</span>-->
-                                        </div>
-                                   </div>
+            
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Street Address 1:</label>
                                         <div class="col-md-8">
-                                          {!! Form::text('line1', $order['shippingAddress']->line1, array('placeholder' => 'Street Address 1','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"16")) !!}
+                                          {!! Form::text('shipping[line1]', $order['shippingAddress']->line1, array('placeholder' => 'Street Address 1','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"16")) !!}
                                           
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -304,7 +299,7 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Street Address 2:</label>
                                         <div class="col-md-8">
-                                          {!! Form::text('line2', $order['shippingAddress']->line2, array('placeholder' => 'Street Address 2','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"17")) !!}
+                                          {!! Form::text('shipping[line2]', $order['shippingAddress']->line2, array('placeholder' => 'Street Address 2','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"17")) !!}
                                            
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -313,14 +308,14 @@
                                         <label class="col-md-4 control-label" for="">Country:</label>
                                         <div class="col-md-8">
                                              <!-- -->
-   											 {!! Form::select('country',[""=>'Select Country']+$countries,$order['shippingAddress']->fk_country,array('class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"18")) !!}
+   											 {!! Form::select('shipping[fk_country]',[""=>'Select Country']+$countries,$order['shippingAddress']->fk_country,array('class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"18")) !!}
                                              <!-- -->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">City Town:</label>
                                         <div class="col-md-8">
-                                          {!! Form::text('city', $order['shippingAddress']->city, array('placeholder' => 'City','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"19")) !!}
+                                          {!! Form::text('shipping[city]', $order['shippingAddress']->city, array('placeholder' => 'City','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"19")) !!}
                                         
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -328,7 +323,7 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">State/Province:</label>
                                         <div class="col-md-8">
-                                          {!! Form::text('state',$order['shippingAddress']->state, array('placeholder' => 'State','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"20")) !!}
+                                          {!! Form::text('shipping[state]',$order['shippingAddress']->state, array('placeholder' => 'State','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"20")) !!}
 
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -336,7 +331,7 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Contact #:</label>
                                         <div class="col-md-8">
-                                          {!! Form::text('phone1',$order['shippingAddress']->phone1, array('placeholder' => 'Contact #','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"21")) !!}
+                                          {!! Form::text('shipping[phone1]',$order['shippingAddress']->phone1, array('placeholder' => 'Contact #','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"21")) !!}
 
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -344,7 +339,7 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Email Address:</label>
                                         <div class="col-md-8">
-                                          {!! Form::email('email', $order['shippingAddress']->email, array('placeholder' => 'Email','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"22")) !!}
+                                          {!! Form::email('shipping[email]', $order['shippingAddress']->email, array('placeholder' => 'Email','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"22")) !!}
                                         
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -363,11 +358,11 @@
                                    <!-- Button -->
                                    <div class="form-group col-md-12 button-area">
                                         <div class="col-md-2 pull-right">
-                                             <button id="" name="" class="btn btn-primary">Save</button>
+                                             <button id="" name="" type="submit" class="btn btn-primary">Save</button>
                                         </div>
                                    </div>
                               </fieldset>
-                         </form>
+                              {!! Form::close() !!}
                     </div>
                </div>
                <!-- Shipping Detail Code End Above -->
@@ -383,15 +378,16 @@
                     </div>
                     <div class="form-outer">
                          <!-- -->
-                         <form class="form-horizontal">
+                          {{  Form::open(array('url'=>'saveAddress', 'method' => 'post','class'=>'form-horizontal')) }}	
                               <fieldset>
-
+								<input type="hidden" name="order_id" id="order_id" value="{{$order->order_id}}">
+								<input type="hidden" name="address_id" id="address_id" value="{{$order['billingAddress']->address_id}}">
                                    <!-- for Error Message you need to add class 'has-error' with 'form-group'-->
                                    <!-- Text input-->
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">First Name:</label>
                                         <div class="col-md-8">
-                                           {!! Form::text('first_name', $order['billingAddress']->first_name, array('placeholder' => 'First Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"24")) !!}
+                                           {!! Form::text('billing[first_name]', $order['billingAddress']->first_name, array('placeholder' => 'First Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"24")) !!}
                                            
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -399,23 +395,16 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Last Name:</label>
                                         <div class="col-md-8">
-                                               {!! Form::text('last_name', $order['billingAddress']->last_name, array('placeholder' => 'Last Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"25")) !!}
+                                               {!! Form::text('billing[last_name]', $order['billingAddress']->last_name, array('placeholder' => 'Last Name','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"25")) !!}
                                             
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
-                                   <div class="form-group">
-                                        <label class="col-md-4 control-label" for="">Company:</label>
-                                        <div class="col-md-8">
-                                        		    {!! Form::text('company',null, array('placeholder' => 'Company','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"26")) !!}
-											
-                                             <!--<span class="help-block">help</span>-->
-                                        </div>
-                                   </div>
+                    
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Street Address 1:</label>
                                         <div class="col-md-8">
-                                        	  {!! Form::text('line1', $order['billingAddress']->line1, array('placeholder' => 'Street Address 1','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"27")) !!}
+                                        	  {!! Form::text('billing[line1]', $order['billingAddress']->line1, array('placeholder' => 'Street Address 1','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"27")) !!}
 												  
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -423,7 +412,7 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Street Address 2:</label>
                                         <div class="col-md-8">
-                                           {!! Form::text('line2', $order['billingAddress']->line2, array('placeholder' => 'Street Address 2','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"28")) !!}
+                                           {!! Form::text('billing[line2]', $order['billingAddress']->line2, array('placeholder' => 'Street Address 2','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"28")) !!}
 													  
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -431,7 +420,7 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Country:</label>
                                         <div class="col-md-8">
-                                        	{!! Form::select('country',[""=>'Select Country']+$countries,$order['billingAddress']->fk_country,array('class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"29")) !!}
+                                        	{!! Form::select('billing[fk_country]',[""=>'Select Country']+$countries,$order['billingAddress']->fk_country,array('class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"29")) !!}
 
                                              <!-- -->
                                         </div>
@@ -439,14 +428,14 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">City Town:</label>
                                         <div class="col-md-8">
-											{!! Form::text('city', $order['billingAddress']->city, array('placeholder' => 'City','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"30")) !!}
+											{!! Form::text('billing[city]', $order['billingAddress']->city, array('placeholder' => 'City','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"30")) !!}
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">State/Province:</label>
                                         <div class="col-md-8">
-                                           {!! Form::text('state',$order['billingAddress']->state, array('placeholder' => 'State','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"31")) !!}
+                                           {!! Form::text('billing[state]',$order['billingAddress']->state, array('placeholder' => 'State','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"31")) !!}
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
@@ -454,7 +443,7 @@
                                         <label class="col-md-4 control-label" for="">Contact #:</label>
                                         <div class="col-md-8">
                                         
-										{!! Form::text('phone1',$order['billingAddress']->phone1, array('placeholder' => 'Contact #','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"32")) !!}
+										{!! Form::text('billing[phone1]',$order['billingAddress']->phone1, array('placeholder' => 'Contact #','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"32")) !!}
                                          
                                              <!--<span class="help-block">help</span>-->
                                         </div>
@@ -462,7 +451,7 @@
                                    <div class="form-group">
                                         <label class="col-md-4 control-label" for="">Email Address:</label>
                                         <div class="col-md-8">
-                                          {!! Form::email('email', $order['billingAddress']->email, array('placeholder' => 'Email','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"33")) !!}
+                                          {!! Form::email('billing[email]', $order['billingAddress']->email, array('placeholder' => 'Email','class' => 'form-control input-md','maxlength'=>"",'tabindex'=>"33")) !!}
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
@@ -511,7 +500,7 @@
                                         </div>
                                    </div>
                               </fieldset>
-                         </form>
+                           {!! Form::close() !!}
                     </div>
                </div>
                <!-- Billing Detail Code End Above -->
@@ -720,7 +709,7 @@
                                                                  </select>
                                                             </div>
                                                        </td>
-                                                       <td> {{$item->inventory_code}}
+                                                       <td> 
                                                             <div class="col-md-12 control-label no-padding">
                                                            
                                                                  <select name="country" id="country" class="form-control" tabindex="42" style="font-size: 9px;">
@@ -914,8 +903,9 @@
                                              </colgroup>
                                              <thead class="">
                                                   <tr>
-                                                      <th>Ship Qty</th> 
-                                                        <th>Item #</th>
+                                                   <th>Warehouses</th> 
+                                                     <!--  <th>Ship Qty</th> 
+                                                        <th>Item #</th> -->
                                                        <th>Image</th>
                                                        <th>Name</th>
                                                        <th>Order/<br />Ship Qty</th>
@@ -928,8 +918,16 @@
                                              <tbody style="font-size: 9px;">
                                               @foreach($order->orderItem as $item)
                          						<tr>
-                                                   
-                                                      <td>
+                                                       <td>
+                                                            <div class="col-md-12 control-label no-padding">
+                                                                 <select name="country" id="country" class="form-control" tabindex="40" style="font-size: 9px;">
+                                                                      <option value="0" label="Please Select … " selected="selected">Please Select …</option>
+                                                                      <option value="" label="One">One</option>
+                                                                      <option value="" label="Two">Two</option>
+                                                                 </select>
+                                                            </div>
+                                                       </td>
+                                                      {{-- <td>
                                                             <div class="col-md-12 control-label no-padding">
                                                                  <select name="country" id="country" class="form-control" tabindex="41" style="font-size: 9px;">
                                                                       <option value="0" label="Ship Qty … " selected="selected">Ship Qty …</option>
@@ -947,23 +945,23 @@
                                                                  </select>
                                                             </div>
                                                             <div class="col-md-12 control-label no-padding txt-align-center">
-                                                                 <!--
-                                                                      Note: for save side i show two type of button here, use one as per required and remove <br /> tag
-                                                                 -->
+                                                            
                                                                  <a href="" class="btn btn-primary">Edit</a><br />
                                                                 <!--   <input type="button" class="btn btn-primary" value="Edit"><br />
                                                                  <button class="btn btn-primary">Edit</button> -->
                                                             </div>
-                                                       </td> 
+                                                       </td> --}}
                                                        <td>
                                                             <img src="https://i.pinimg.com/736x/b3/5d/c6/b35dc64be219dd383c5322d2d5203a95--mens-leather-bomber-jacket-biker-leather.jpg" alt="" class="img-responsive">
                                                        </td>
                                                        <td>
                                                             <!-- -->
                                                             <div class="product-name width-100p">{{$item->product->productsDescription->products_name}}</div>
-                                                            <div class="product-name-two width-100p">Platform</div>
-                                                            <div class="designer-name width-100p">Robert Clergerie</div>
-                                                            <div class="size width-100p margin-top-10">Size: <span class="">Medium</span></div>
+                                                           <!--  
+                                                           	<div class="product-name-two width-100p">Platform</div>
+                                                            <div class="designer-name width-100p">Robert Clergerie</div> 
+                                                            -->
+                                                            <div class="size width-100p margin-top-10">Inventory: <span class="">{{$item->inventory_code}}</span></div>
                                                            
                               
                                                             </div>
