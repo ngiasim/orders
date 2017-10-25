@@ -10,14 +10,15 @@ use App\Models\Product_description;
 use App\Models\Language;
 use App\Models\Product_status;
 use App\User;
+use App\Models\InventoryItem;
 
 class CartController extends Controller
 {
 	public function index()
 	{
 			$cartItems = Cart::content();
-			$total = Cart::total();
-			$total_tax = Cart::tax();
+			$total = Cart::total('2','.','');
+			$total_tax = Cart::tax('2','.','');
 	    return view('cart::index',compact('cartItems','total','total_tax'));
 	}
 
@@ -28,10 +29,15 @@ class CartController extends Controller
       $option["fk_product_status"] = $products[0]->fk_product_status;
 			$option["invsku"] = $input['invsku'];
 			$option["invId"] = $input['invId'];
-			Cart::add($products[0]->product_id,$products[0]->productsDescription->products_name, 1, $products[0]->base_price,$option);
+			$option["base_price"] = $products[0]->base_price;
+			$objInvItem = InventoryItem::find($input['invId']);
+			$option["qty_unlimited"] = $objInvItem->qty_unlimited;
+			$option["max_qty"] = ($objInvItem->qty_onhand-$objInvItem->qty_reserved-$objInvItem->qty_admin_reserved)+$objInvItem->qty_preorder;
+			$price = $products[0]->base_price + $objInvItem->inventory_price;
+			Cart::add($products[0]->product_id,$products[0]->productsDescription->products_name, 1, $price,$option);
 			$cartItems = Cart::content();
-		 	$total = Cart::total();
-			$total_tax = Cart::tax();
+		 	$total = Cart::total('2','.','');
+			$total_tax = Cart::tax('2','.','');
 		 	$cartView = \View::make('cart::index', array("cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
 	    $data = array(
 	        "cartview" => $cartView
@@ -45,8 +51,8 @@ class CartController extends Controller
     //Cart::update($input['rowid'], array('qty' => 8));
     Cart::update($input['rowid'],$input['updateitemsarr']); // array('name' => 'Product 1'));
 		$cartItems = Cart::content();
-		$total = Cart::total();
-		$total_tax = Cart::tax();
+		$total = Cart::total('2','.','');
+		$total_tax = Cart::tax('2','.','');
 		$cartView = \View::make('cart::index', array("cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
 		$data = array(
 				"cartview" => $cartView
@@ -60,8 +66,8 @@ class CartController extends Controller
     //Cart::remove($rowId);
     Cart::remove($input['rowid']);
 		$cartItems = Cart::content();
-		$total = Cart::total();
-		$total_tax = Cart::tax();
+		$total = Cart::total('2','.','');
+		$total_tax = Cart::tax('2','.','');
 		$cartView = \View::make('cart::index', array("cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
 		$data = array(
 				"cartview" => $cartView

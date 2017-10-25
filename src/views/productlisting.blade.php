@@ -39,7 +39,7 @@
                     <!-- <select id="{{$row->product_id}}-colors" name="{{$row->product_id}}-colors" onChange="">
                     </select> -->
                </td>
-               <td>{{$row->base_price}}</td>
+               <td><label style="display:none;" id="{{$row->product_id}}-price" name="{{$row->product_id}}-price" >{{$row->base_price}}</label></td>
        	       <!-- <td><button type='button' onclick="setInventory('{{$row->product_id}}','{{$row->products_sku}}');addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td> -->
                <td><button type='button' id="{{$row->product_id}}-add" name="{{$row->product_id}}-add" style="display:none;" onclick="addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td>
               </tr>
@@ -74,13 +74,16 @@
 
                             if(search) //(json_arr[key][key2]['options'][productattr[productsku][0]] == $("#"+product_id+"-"+'Size').val() && json_arr[key][key2]['options'][productattr[productsku][1]] == $("#"+product_id+"-"+'Color').val() )
                             {
-                               console.log("kkkkkkk"+json_arr[key][key2]['options'][productattr[productsku][0]]);
-                               //console.log("hhhhh::"+key2);
                                $("#"+product_id+"-invsku").val(key2);
                                $("#"+product_id+"-invId").val(json_arr[key][key2]['inventory_id']);
+                               if(json_arr[key][key2]['inventory_price_prefix'] == "+"){
+                                $("#"+product_id+"-price").html(parseInt(json_arr[key][key2]['product_price']) + parseInt(json_arr[key][key2]['inventory_price']));
+                              }else {
+                                 $("#"+product_id+"-price").html(parseInt(json_arr[key][key2]['product_price']) - parseInt(json_arr[key][key2]['inventory_price']));
+                               }
                                $("#"+product_id+"-add").show();
-                              //matchcount= matchcount + 1;
-                              return false;
+                               $("#"+product_id+"-price").show();
+                               return false;
                             }
                  }
                }
@@ -105,7 +108,7 @@
            }
          }
        }
-       console.log(colors);
+       //console.log(colors);
        var option = $('<option/>');
        option.attr({ 'value': '' }).text("Select "+Nextattribute);
        $("#"+productId+"-"+Nextattribute).append(option);
