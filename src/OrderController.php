@@ -19,6 +19,7 @@ use App\Models\ProductAttribute;
 use App\Models\ProductOptionValue;
 use App\Models\InventoryItem;
 use App\Models\InventoryItemDetail;
+use App\Models\Address;
 use DB;
 
 class OrderController extends Controller
@@ -68,6 +69,7 @@ class OrderController extends Controller
   //dd($product_options);
 
      foreach ($products as $option ) {
+
       $products_attributes =   Product::join('map_product_inventory_item as mpii','mpii.fk_product','product_id')
       ->join('inventory_item as ii','mpii.fk_inventory_item','ii.inventory_id')
       ->join('inventory_item_detail as iid','ii.inventory_id','iid.fk_inventory_item')
@@ -89,6 +91,7 @@ class OrderController extends Controller
       //   and mpii.fk_inventory_item = ii.inventory_id
       //   and product_id = mpii.fk_product
       //   and product_id ='.$option->product_id);
+
        //dd($products_attributes);
         $json_cook_atributes_product ;
         $cook_atributes_product ;
@@ -141,11 +144,7 @@ class OrderController extends Controller
         $total = Cart::total() - Cart::tax();
         $customer_id = \Session::get('customer_id');
 
-        // if(
-        //     Auth::user()->charge($total*100, [
-        //     'source' => $token,
-        //     'receipt_email' => Auth::user()->email,
-        // ])){
+    
 
             $order = new Order();
             $order->fk_order_status= 1;
@@ -186,11 +185,7 @@ class OrderController extends Controller
               $user->orders_count= $user->orders_count + 1;
               $user->save();
 
-          //return redirect('/order/'.$order->order_id);
-        //
-        // }else{
-        //     return redirect('/cart');
-        // }
+
 
         $data = array(
   	        "order_id" => $order->order_id
@@ -202,20 +197,6 @@ class OrderController extends Controller
     public function index(Request $request){
 
     	$input = $request->all();
-        /* $input = $request->all();
-         $order = new Order();
-         $filter = Array();
-        //  if ($input['customer_id'])
-        //  {
-        //    $filter['customer_id'] = $input['customer_id'];
-        //  }
-         //dd($input['customer_id']);
-         $orders = $order->getOrdersByFilters($input);
-        //$orders = Order::all();
-
-        return view('orders::listview',['orders'=>$orders]);*/
-
-
         $statuses = OrderStatus::pluck('status_name','order_status_id')->toArray();
         return view('orders::listview',['order_statuses'=>$statuses,'inputData'=>$input]);
 
@@ -282,16 +263,48 @@ class OrderController extends Controller
     }
 
     public function viewOrder($orderId){
-        $order = Order::with(['billingAddress','shippingAddress'])->find($orderId);
-         $country = Country::pluck('name','country_id')->toArray();
-        //get customer detail
-        //order detail
+        $order = Order::with(['billingAddress','shippingAddress','orderItem'])->find($orderId);
+
+        print_r($order);
+        exit;
+        $country = Country::pluck('name','country_id')->toArray();
+
         $user = new User();
         $input['customer_id'] = $order->fk_customer;
         $custumerData = $user->customerQuery($input)->get();
-        // get address details
-        return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country]);
+
+        $statuses =
+        [
+        		 ''=>'Select Status',
+        		 '0'=>'In Active',
+        		 '1'=>'Active',
+
+        ];
+        return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country,'statuses'=>$statuses]);
     }
+
+    public function saveAddress(Request $request)
+    {
+    	//save address
+    	$input = $request->all();
+     	$addressId = 	$input['address_id'];
+     	$orderId = 	$input['order_id'];
+     	$addressDetail = [];
+     	if(isset($input['shipping']) )
+     	{
+     		$addressDetail  = $input['shipping'];
+     	}
+     	if(isset($input['billing']))
+     	{
+     		$addressDetail  = $input['billing'];
+     	}
+        $address = new Address();
+     	$address->where('address_id',$addressId)->update($addressDetail);
+
+        return redirect()->to("/order/".$orderId);
+
+    }
+
 
 
 }

@@ -51,12 +51,9 @@
                       @include('orders::selectedcustomer')
                   </div>
 				  </div>
-          @if (count($customers) > 0)
-                <div id="product-section" style="display:;" class="panel-body">
-          @else
-                <div id="product-section" style="display:none;" class="panel-body">
-          @endif
 
+
+				  <div class="panel-body">
 
                 {!! Form::open(['method'=>'patch','url' => "",'name'=>"frm_porder",'id'=>"frm_porder"]) !!}
 
@@ -80,17 +77,12 @@
 				  <div id="product-view"class="form-group row">
 				  </div>
 				  </div>
-          @if (count($customers) > 0)
-                <div id="cart-section" style="display:;" class="panel-body">
-          @else
-                <div id="cart-section" style="display:none;" class="panel-body">
-          @endif
 				  <div class="panel-heading">Cart</div>
+				  <div class="panel-body">
 					  <div id="cartviewlist" class="form-group row">
 					  @include('cart::index')
 					  </div>
 				  </div>
-        </div>
 			</div>
 		</div>
 	</div>
@@ -100,7 +92,6 @@
 <script>
 
 //var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-
 
   function placeorder()
   {
@@ -129,7 +120,6 @@
            if (res.success)
            {
              $("#customers-view").html(res.customerView);
-             $("#product-section").show();
            }
          //location.href = "/phoneorder";
          }
@@ -161,7 +151,6 @@
             if (res.success)
             {
                 $("#product-view").html(res.productView);
-                $("#cart-section").show();
             }
               // /$("#product-view").html(res);
           }
