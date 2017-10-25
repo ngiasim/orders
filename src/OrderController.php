@@ -26,7 +26,7 @@ class OrderController extends Controller
 
   public function phoneOrder()
   {
-       //dd(\Session::all());
+      // dd(\Session::all());
        $inventoryObj = InventoryItem::where('inventory_id', '=', 8)
        ->with(array('inventoryItemDetail' => function($query) {
               $query->with('productOption');
@@ -75,7 +75,7 @@ class OrderController extends Controller
       ->join('product_option_value as pov','iid.fk_product_option_values', 'pov.product_option_value_id')
       ->where('product_id','=',$option->product_id)
       ->select('inventory_id','products_sku','inventory_code','product_option_id','po.name as option_name','pov.name',
-       DB::Raw('(qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty'))
+       DB::Raw('(qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty'),'ii.inventory_price','ii.inventory_price_prefix','base_price')
        ->get();
 //dd($products_attributes);
   // DB::raw('qty_onhand')-DB::raw('qty_reserved')-DB::raw('qty_admin_reserved')+DB::raw('qty_preorder' as qty))
@@ -104,6 +104,9 @@ class OrderController extends Controller
               $cook_atributes_product[$pa->products_sku][$pa->option_name] = array_unique($cook_atributes_product[$pa->products_sku][$pa->option_name]);
               $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["options"][$pa->option_name]=$pa->name;
               $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_id"] = $pa->inventory_id;
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_price"] = $pa->inventory_price;
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_price_prefix"] = $pa->inventory_price_prefix;
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["product_price"] = $pa->base_price;
            }
         }
 
@@ -170,7 +173,8 @@ class OrderController extends Controller
                 $orderItem->fk_product_status=$item->options->fk_product_status;
                 $orderItem->inventory_code=$item->options->invsku;
                 $orderItem->fk_inventory=$item->options->invId;
-                $orderItem->products_price=$item->price;
+                $orderItem->products_price=$item->options->base_price;
+                $orderItem->price=$item->price;
                 $orderItem->ordered_quantity=$item->qty;
                 $orderItem->peritem_tax= ($item->price*($item->taxRate/100))*$item->qty; // $item->id;
                 $orderItem->fk_warehouse = 1;

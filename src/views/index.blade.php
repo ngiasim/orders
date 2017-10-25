@@ -57,7 +57,7 @@
                 <div id="product-section" style="display:none;" class="panel-body">
           @endif
 
-				  
+
                 {!! Form::open(['method'=>'patch','url' => "",'name'=>"frm_porder",'id'=>"frm_porder"]) !!}
 
                 <div class="form-group row">
@@ -171,8 +171,8 @@
 	 function addtocart(id){
      var invsku = $("#"+id+"-invsku").val();
      var invId =$("#"+id+"-invId").val();
-     console.log(invsku);
-     console.log(invId);
+    //  console.log(invsku);
+    //  console.log(invId);
 		$.ajax({
           url: "/addcart",
           dataType: 'JSON',

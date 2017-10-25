@@ -10,6 +10,7 @@ use App\Models\Product_description;
 use App\Models\Language;
 use App\Models\Product_status;
 use App\User;
+use App\Models\InventoryItem;
 
 class CartController extends Controller
 {
@@ -28,7 +29,10 @@ class CartController extends Controller
       $option["fk_product_status"] = $products[0]->fk_product_status;
 			$option["invsku"] = $input['invsku'];
 			$option["invId"] = $input['invId'];
-			Cart::add($products[0]->product_id,$products[0]->productsDescription->products_name, 1, $products[0]->base_price,$option);
+			$option["base_price"] = $products[0]->base_price;
+			$objInvItem = InventoryItem::find($input['invId']);
+			$price = $products[0]->base_price + $objInvItem->inventory_price;
+			Cart::add($products[0]->product_id,$products[0]->productsDescription->products_name, 1, $price,$option);
 			$cartItems = Cart::content();
 		 	$total = Cart::total();
 			$total_tax = Cart::tax();
