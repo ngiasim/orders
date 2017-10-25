@@ -5,6 +5,7 @@ namespace Ngiasim\Orders;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Country;
 use App\Models\Product_description;
@@ -18,6 +19,7 @@ use App\Models\ProductOption;
 use App\Models\ProductAttribute;
 use App\Models\ProductOptionValue;
 use App\Models\InventoryItem;
+use App\Models\OrderComment;
 use App\Models\InventoryItemDetail;
 use App\Models\Address;
 use DB;
@@ -268,16 +270,16 @@ class OrderController extends Controller
     }
 
     public function viewOrder($orderId){
-        $order = Order::with(['billingAddress','shippingAddress','orderItem'])->find($orderId);
+        $order = Order::with(['billingAddress','shippingAddress','orderComment'])->find($orderId);
         
-        print_r($order);
-        exit;
+       
         $country = Country::pluck('name','country_id')->toArray();
         //get customer detail
         //order detail
         $user = new User();
         $input['customer_id'] = $order->fk_customer;    
         $custumerData = $user->customerQuery($input)->get();
+        
         // get address details
 		//statuses list
         $statuses = 
@@ -310,6 +312,21 @@ class OrderController extends Controller
   
         return redirect()->to("/order/".$orderId);
         
+    }
+    
+    public function addComment (Request $request,$orderId)
+    {
+    	$input = $request->all();
+    	//print_r($input);
+    	//exit;
+    	
+    	
+    	$id = Auth::user()->users_id;
+    	$input['fk_order']  = $orderId;
+    	$input['created_by']  =  $id;
+    	OrderComment::create($input);
+    	return redirect()->to("/order/".$orderId);
+    	
     }
 
 

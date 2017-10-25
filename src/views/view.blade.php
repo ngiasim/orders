@@ -510,13 +510,14 @@
      <!-- Shipping/Billing Detail Code row End Above -->
 
      <!-- Comments History Code row Start Below -->
-    {{-- <div class="row">
+  <div class="row">
           <div class="panel panel-primary">
                <div class="panel-heading">
                     <h3 class="panel-title">Comments History</h3>
                </div>
                <div class="form-outer">
-                    <form class="form-horizontal">
+
+                    	{{  Form::open(array('url'=>'addComment/'.$order->order_id, 'method' => 'post','class'=>'form-horizontal')) }}	
                          <fieldset>
                               <!-- All Customer Comments Section Start Below -->
                               <div class="form-group col-md-7">
@@ -544,26 +545,31 @@
                                                        </tr>
                                                   </thead>
                                                   <tbody>
+                                                  @if(count($order['orderComment']) > 0 )
+                                                  @foreach($order['orderComment'] as $key=>$comment)
                                                        <tr>
-                                                            <td>&nbsp;</td>
-                                                            <td>&nbsp;</td>
-                                                            <td>&nbsp;</td>
-                                                            <td>&nbsp;</td>
-                                                            <td>&nbsp;</td>
+                                                            <td>{{date_format($comment->created_at,"M j,Y")}}</td>
+                                                            <td>@if($comment->is_emailed == '0') No @else  Yes @endif</td>
+                                                            <td>{{$comment->created_by}}</td>
+                                                            <td>{{$comment->subject}}</td>
+                                                            <td>{{$comment->message}}</td>
                                                        </tr>
+                                                       @endforeach
+                                                   @endif
                                                   </tbody>
                                              </table>
                                              <!-- -->
                                         </div>
                                    </div>
                               </div>
-                              <!-- All Customer Comments Section End Above -->
-
+                            <!-- All Customer Comments Section End Above -->
+    					
                               <!-- -->
                               <div class="form-group col-md-5">
                                    <div class="form-group">
                                         <div class="col-md-12 txt-align-left no-padding-left">Add a Comment</div>
                                    </div>
+                                   
                                    <div class="form-group">
                                         <!-- -->
                                         <label class="col-md-5 control-label no-padding-left txt-align-left" for="">Send Copy to Customer:</label>
@@ -572,11 +578,11 @@
                                              <!-- Multiple Radios (inline) -->
                                              <div class="control-label txt-align-left">
                                                   <label class="radio-inline" for="send-copy-yes">
-                                                       <input type="radio" name="radios" id="send-copy-yes" value="1" checked="checked" maxlength="" tabindex="11">
+                                                       <input type="radio" name="is_emailed" id="send-copy-yes" value="1" checked="checked" maxlength="" tabindex="11">
                                                        <span>Enabled</span>
                                                   </label>
                                                   <label class="radio-inline" for="send-copy-no">
-                                                       <input type="radio" name="radios" id="send-copy-no" value="2" maxlength="" tabindex="12">
+                                                       <input type="radio" name="is_emailed" id="send-copy-no" value="0" maxlength="" tabindex="12">
                                                        <span>Disabled</span>
                                                   </label>
                                              </div>
@@ -586,14 +592,14 @@
                                    <div class="form-group">
                                         <label class="col-md-5 control-label no-padding-left txt-align-left" for="">Subject:</label>
                                         <div class="col-md-7">
-                                             <input id="" name="" type="text" placeholder="Subject" class="form-control input-md" maxlength="" tabindex="37">
+                                             <input id="subject" name="subject" type="text" placeholder="Subject"  required = "required" class="form-control input-md" maxlength="" tabindex="37">
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
                                    <div class="form-group">
                                         <label class="col-md-5 control-label no-padding-left txt-align-left" for="">Message:</label>
                                         <div class="col-md-7">
-                                             <textarea class="form-control" id="textarea" name="textarea" tabindex="38">default text</textarea>
+                                             <textarea class="form-control" placeholder="Message" id="message" name="message" required = "required" tabindex="38"></textarea>
                                         </div>
                                    </div>
                               </div>
@@ -602,15 +608,15 @@
                               <!-- Button -->
                               <div class="form-group col-md-12 button-area">
                                    <div class="col-md-1 pull-right">
-                                        <button id="" name="" class="btn btn-primary">Save</button>
+                                        <button  type="submit" class="btn btn-primary">Save</button>
                                    </div>
                               </div>
-
+ 						{!! Form::close() !!}
                          </fieldset>
-                    </form>
+                   
                </div>
           </div>
-     </div> --}}
+     </div> 
      <!-- Comments History Code row Start Below -->
 
      <!-- Item Orders Code row Start Below -->

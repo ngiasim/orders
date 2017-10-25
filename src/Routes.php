@@ -23,6 +23,8 @@ Route::group([
         Route::get('/order/getdata', 'ngiasim\orders\OrderController@getOrders')->name('order/getdata');
         Route::get('/order/{id}','ngiasim\orders\OrderController@viewOrder');
         Route::post('/saveAddress', 'ngiasim\orders\OrderController@saveAddress');
+        
+        Route::post('/addComment/{id}', 'ngiasim\orders\OrderController@addComment'); 
         //Route::resource('products','ngiasim\products\ProductController');	
 	});
 	});
