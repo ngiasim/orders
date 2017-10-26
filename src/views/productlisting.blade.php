@@ -39,7 +39,7 @@
                     <!-- <select id="{{$row->product_id}}-colors" name="{{$row->product_id}}-colors" onChange="">
                     </select> -->
                </td>
-               <td><label style="display:none;" id="{{$row->product_id}}-price" name="{{$row->product_id}}-price" >{{$row->base_price}}</label></td>
+               <td><label style="display:none;" id="{{$row->product_id}}-price" name="{{$row->product_id}}-price" >{{$row->base_price}}</label><label style="display:none;" id="{{$row->product_id}}-checkout_currency_symbol_right" name="{{$row->product_id}}-checkout_currency_symbol_right" ></label></td>
        	       <!-- <td><button type='button' onclick="setInventory('{{$row->product_id}}','{{$row->products_sku}}');addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td> -->
                <td><button type='button' id="{{$row->product_id}}-add" name="{{$row->product_id}}-add" style="display:none;" onclick="addtocart({{$row->product_id}});" class='glyphicon glyphicon-shopping-cart'></button></td>
               </tr>
@@ -77,12 +77,15 @@
                                $("#"+product_id+"-invsku").val(key2);
                                $("#"+product_id+"-invId").val(json_arr[key][key2]['inventory_id']);
                                if(json_arr[key][key2]['inventory_price_prefix'] == "+"){
-                                $("#"+product_id+"-price").html(parseInt(json_arr[key][key2]['product_price']) + parseInt(json_arr[key][key2]['inventory_price']));
+                                $("#"+product_id+"-price").html(parseFloat(json_arr[key][key2]['product_price']) + parseFloat(json_arr[key][key2]['inventory_price']));
+                                $("#"+product_id+"-checkout_currency_symbol_right").html(json_arr[key][key2]['checkout_currency_symbol_right']);
                               }else {
                                  $("#"+product_id+"-price").html(parseInt(json_arr[key][key2]['product_price']) - parseInt(json_arr[key][key2]['inventory_price']));
+                                 $("#"+product_id+"-checkout_currency_symbol_right").html(json_arr[key][key2]['checkout_currency_symbol_right']);
                                }
                                $("#"+product_id+"-add").show();
                                $("#"+product_id+"-price").show();
+                               $("#"+product_id+"-checkout_currency_symbol_right").show();
                                return false;
                             }
                  }

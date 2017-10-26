@@ -39,6 +39,10 @@ class Order extends Model
 	 	{
 			 return $this->hasMany('App\Models\OrderItem', 'fk_order', 'order_id');
 	 	}
+	 	public function orderComment()
+	 	{
+	 		return $this->hasMany('App\Models\OrderComment', 'fk_order', 'order_id');
+	 	}
 
 		public function getOrdersByFilters($filter) {
 		  $data = $this->with(array('user','customer','orderStatus'))->orderBy('order_id','DESC');
@@ -83,9 +87,13 @@ class Order extends Model
 			   {
 			   	$data = $data->where('orders_source', $filter['order_source']);
 			   }
+			   
+			   
 		  }
 		 
-		  return $data->get();
+		   $data->get()->sortBy(function($order) { 
+       				return  $order->orderBy('order_comment.created_at', 'desc');
+  			});
 		}
 
     // public function productsDescription()
