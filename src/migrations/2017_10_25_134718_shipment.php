@@ -16,7 +16,7 @@ class Shipment extends Migration
         //
     	Schema::create('shipment', function (Blueprint $table) {
     		$table->increments('shipment_id',15);
-    		$table->integer('fk_order')->unsigned();
+    		$table->integer('fk_order');
     		$table->string('auth_code',255)->nullable();
     		$table->string('auth_trans_id',255)->nullable();
     		$table->string('auth_detail',255)->nullable();
