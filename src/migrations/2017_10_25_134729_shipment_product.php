@@ -14,7 +14,7 @@ class ShipmentProduct extends Migration
     public function up()
     {
         //
-        
+
     	Schema::create('shipment_product', function (Blueprint $table) {
     		$table->increments('shipment_product_id',15);
     		$table->integer('fk_shipment')->unsigned();
@@ -35,18 +35,20 @@ class ShipmentProduct extends Migration
 			$table->integer('created_by')->default(0);
     		$table->integer('updated_by')->default(0);
     		$table->integer('deleted_by')->default(0);
-    		
-    		 
+
+
     		$table->timestamps();
     		$table->softDeletes();
-    		 
+
     	});
-    	
+
+
     		/*Schema::table('shipment_product', function (Blueprint $table) {
     		$table->foreign('fk_shipment')->references('shipment_id')->on('shipment');
     		$table->foreign('fk_order')->references('order_id')->on('order');
     		$table->foreign('fk_order_product')->references('order_product_id')->on('order_product');
     		});*/
+
     }
 
     /**
