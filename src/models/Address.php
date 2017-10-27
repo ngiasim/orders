@@ -36,16 +36,11 @@ class Address extends Model
     protected function addWarehouseAddress($request){
 
         $this->fill([
-                'first_name'        => 'customer1',
-                'last_name'         => 'customer1',
-                'email'             => 'customer1@test.com',
                 'line1'        		=> $request['line1'],
                 'line2'         	=> $request['line2'],
                 'line3'             => $request['line3'],
                 'city'              => $request['city'],
                 'state'             => $request['state'],
-                'fk_customer'      	=> 1,
-                'fk_language'       => 1,
                 'fk_country'        => $request['fk_country']
             ]);
 
