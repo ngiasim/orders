@@ -334,7 +334,7 @@ class OrderController extends Controller
     	return redirect()->to("/order/".$orderId);
 
     }
-
+/*
     public function addComment (Request $request,$orderId)
     {
     	$input = $request->all();
@@ -349,6 +349,6 @@ class OrderController extends Controller
     	return redirect()->to("/order/".$orderId);
 
     }
-
+*/
 
 }
