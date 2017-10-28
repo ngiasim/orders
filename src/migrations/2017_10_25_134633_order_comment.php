@@ -20,7 +20,7 @@ class OrderComment extends Migration
     		$table->string('subject',50)->nullable();
     		$table->text('message')->nullable();
     		$table->enum('is_emailed', ['0', '1'])->default('0');
-    		$table->integer('fk_order');
+    		$table->integer('fk_order')->unsigned();
     		$table->integer('created_by')->default(0);
     	
     		$table->timestamps();

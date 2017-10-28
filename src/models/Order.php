@@ -90,10 +90,8 @@ class Order extends Model
 			   
 			   
 		  }
-		 
-		   $data->get()->sortBy(function($order) { 
-       				return  $order->orderBy('order_comment.created_at', 'desc');
-  			});
+
+		   	return $data->get();
 		}
 
     // public function productsDescription()

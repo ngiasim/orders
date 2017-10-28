@@ -12,6 +12,11 @@ class OrderComment extends Model
     protected $primaryKey = "order_comment_id";
 
 
-
     protected $fillable = ['fk_order', 'subject', 'message', 'is_emailed','created_by', 'created_at', 'updated_at', 'deleted_at'];
+    public function user()
+    {
+    	return $this->belongsTo('App\User','created_by','users_id');
+    }
+    
+    
 }

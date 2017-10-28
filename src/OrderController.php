@@ -21,6 +21,9 @@ use App\Models\ProductOptionValue;
 use App\Models\InventoryItem;
 use App\Models\OrderComment;
 use App\Models\InventoryItemDetail;
+use App\Models\Address;
+use App\Models\Warehouse;
+use App\Models\Shipment;
 use DB;
 
 class OrderController extends Controller
@@ -28,7 +31,7 @@ class OrderController extends Controller
 
   public function phoneOrder()
   {
-      // dd(\Session::all());
+       //dd(\Session::all());
        $inventoryObj = InventoryItem::where('inventory_id', '=', 8)
        ->with(array('inventoryItemDetail' => function($query) {
               $query->with('productOption');
@@ -37,8 +40,8 @@ class OrderController extends Controller
 
        //dd($inventoryObj);
        $cartItems = Cart::content();
-       $total = Cart::total('2','.','');
-       $total_tax = Cart::tax('2','.','');
+       $total = Cart::total();
+       $total_tax = Cart::tax();
        $customer_id = \Session::get('customer_id');
        $customers =  User::where('users_id', '=', $customer_id)->get();
        return view('orders::index', compact('cartItems','total','total_tax','customer_id','customers'));
@@ -70,27 +73,16 @@ class OrderController extends Controller
   //dd($product_options);
 
      foreach ($products as $option ) {
-      $products_attributes =   Product::join('map_product_inventory_item as mpii','mpii.fk_product','product_id')
-      ->join('inventory_item as ii','mpii.fk_inventory_item','ii.inventory_id')
-      ->join('inventory_item_detail as iid','ii.inventory_id','iid.fk_inventory_item')
-      ->join('product_option as po','po.product_option_id','iid.fk_product_option')
-      ->join('product_option_value as pov','iid.fk_product_option_values', 'pov.product_option_value_id')
-      ->where('product_id','=',$option->product_id)
-      ->select('inventory_id','products_sku','inventory_code','product_option_id','po.name as option_name','pov.name',
-       DB::Raw('(qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty'),'ii.inventory_price','ii.inventory_price_prefix','base_price')
-       ->get();
-//dd($products_attributes);
-  // DB::raw('qty_onhand')-DB::raw('qty_reserved')-DB::raw('qty_admin_reserved')+DB::raw('qty_preorder' as qty))
-      //  $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name,
-      //   (qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty
-      //   from inventory_item ii,inventory_item_detail iid,product_option_value pov,product_option po
-      //   ,product p,map_product_inventory_item mpii
-      //   where inventory_id = iid.fk_inventory_item
-      //   and iid.fk_product_option_values = product_option_value_id
-      //   and iid.fk_product_option = product_option_id
-      //   and mpii.fk_inventory_item = ii.inventory_id
-      //   and product_id = mpii.fk_product
-      //   and product_id ='.$option->product_id);
+       $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name,
+        (qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty
+        from inventory_item ii,inventory_item_detail iid,product_option_value pov,product_option po
+        ,product p,map_product_inventory_item mpii
+        where inventory_id = iid.fk_inventory_item
+        and iid.fk_product_option_values = product_option_value_id
+        and iid.fk_product_option = product_option_id
+        and mpii.fk_inventory_item = ii.inventory_id
+        and product_id = mpii.fk_product
+        and product_id ='.$option->product_id);
        //dd($products_attributes);
         $json_cook_atributes_product ;
         $cook_atributes_product ;
@@ -106,9 +98,6 @@ class OrderController extends Controller
               $cook_atributes_product[$pa->products_sku][$pa->option_name] = array_unique($cook_atributes_product[$pa->products_sku][$pa->option_name]);
               $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["options"][$pa->option_name]=$pa->name;
               $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_id"] = $pa->inventory_id;
-              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_price"] = $pa->inventory_price;
-              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_price_prefix"] = $pa->inventory_price_prefix;
-              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["product_price"] = $pa->base_price;
            }
         }
 
@@ -140,7 +129,7 @@ class OrderController extends Controller
 
         //Retriieve cart information
         $cartItems = Cart::content();
-        $total = Cart::total('2','.','') - Cart::tax('2','.','');
+        $total = Cart::total() - Cart::tax();
         $customer_id = \Session::get('customer_id');
 
         // if(
@@ -156,10 +145,10 @@ class OrderController extends Controller
             $order->shipping_method= "FEDEX";
             $order->shipping_amount= 0;
             $order->shipping_tax= 0;
-            $order->tax= Cart::tax('2','.','');
+            $order->tax= Cart::tax();
             $order->order_total= $total;
             $order->fk_order_status= 1;
-            $order->order_final_total= Cart::total('2','.','');
+            $order->order_final_total= Cart::total();
             $order->orders_source= $input['source'];
             $order->checkout_currency_code= $input['checkout_currency_code'];
             $order->checkout_currency_rate= 1.0;
@@ -175,8 +164,7 @@ class OrderController extends Controller
                 $orderItem->fk_product_status=$item->options->fk_product_status;
                 $orderItem->inventory_code=$item->options->invsku;
                 $orderItem->fk_inventory=$item->options->invId;
-                $orderItem->products_price=$item->options->base_price;
-                $orderItem->price=$item->price;
+                $orderItem->products_price=$item->price;
                 $orderItem->ordered_quantity=$item->qty;
                 $orderItem->peritem_tax= ($item->price*($item->taxRate/100))*$item->qty; // $item->id;
                 $orderItem->fk_warehouse = 1;
@@ -214,18 +202,18 @@ class OrderController extends Controller
          //dd($input['customer_id']);
          $orders = $order->getOrdersByFilters($input);
         //$orders = Order::all();
-
+      
         return view('orders::listview',['orders'=>$orders]);*/
-
-
+        
+       
         $statuses = OrderStatus::pluck('status_name','order_status_id')->toArray();
         return view('orders::listview',['order_statuses'=>$statuses,'inputData'=>$input]);
-
-    }
+      
+    }    
     public function getOrders (Request $request)
     {
     	$input = $request->all();
-    	$order = new Order();
+    	$order = new Order();	
     	$orders = $order->getOrdersByFilters($input);
     	$response = $this->makeDatatable($orders);
     	return  $response;
@@ -257,7 +245,7 @@ class OrderController extends Controller
     	->addColumn('order_date', function ($order) {
     		$return = \Carbon\Carbon::parse($order->created_at)->toDayDateTimeString();
     		return $return;
-
+    		 
     	})
     	->addColumn('customer_name', function ($order) {
     		$name = "";
@@ -275,25 +263,65 @@ class OrderController extends Controller
     	})
     	->addColumn('action', function ($order) {
     		$return = '<td><a href="/order/'.$order->order_id.'"><i class="fa fa-search-plus"></i></a></td>';
-    		return $return;
+    		return $return;	 
     	})->addColumn('customer_no', function ($order) {
     		$return = isset($order['customer']->contact_no)?$order['customer']->contact_no:"";
     		return $return;
-
+	 
     	})->rawColumns(['id','customer_name', 'action'])->make(true);
     }
 
     public function viewOrder($orderId){
-        $order = Order::with(['billingAddress','shippingAddress','orderComment'])->find($orderId);
-		$country = Country::pluck('name','country_id')->toArray();
+        $order = Order::with(['billingAddress','shippingAddress','orderComment'])->find($orderId); 
+        $country = Country::pluck('name','country_id')->toArray();
+        $warehouses = Warehouse::pluck('name','warehouse_id')->toArray();     
         //get customer detail
         //order detail
         $user = new User();
-        $input['customer_id'] = $order->fk_customer;
-        $custumerData = $user->customerQuery($input)->get();
-        
+        $input['customer_id'] = $order->fk_customer;    
+        $custumerData = $user->customerQuery($input)->get();  
         // get address details
-        return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country]);
+		// statuses list
+        $statuses = 
+        [
+        		 ''  =>'Select Status',
+        		 '0' =>'In Active',
+        		 '1' =>'Active',	
+        ];
+        $methods = [
+        	"method1"	=> "Method1",
+            "method2"	=> "Method2",
+        	"method3"	=> "Method3",
+        ];
+        $shipment = new Shipment();
+        $shippingDetail = $shipment->getShipment($orderId);
+        
+        
+        $orderItemCount = count($order->orderItem);
+        $shipItemCount =OrderItem::where('fk_order',$orderId)->where('fk_warehouse',">",0)->count();
+        return view('orders::view',['orderItemCount'=>$orderItemCount,'shipItemCount'=>$shipItemCount,'shipping_details'=>$shippingDetail,'shipping_methods'=>$methods,'warehouses'=>$warehouses,'order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country,'statuses'=>$statuses]);
+    }
+    
+    public function saveAddress(Request $request)
+    {
+    	//save address
+    	$input = $request->all();
+     	$addressId = 	$input['address_id'];
+     	$orderId = 	$input['order_id'];
+     	$addressDetail = [];
+     	if(isset($input['shipping']) )
+     	{
+     		$addressDetail  = $input['shipping'];
+     	}
+     	if(isset($input['billing']))
+     	{
+     		$addressDetail  = $input['billing'];
+     	}
+        $address = new Address();
+     	$address->where('address_id',$addressId)->update($addressDetail);
+  
+        return redirect()->to("/order/".$orderId);
+        
     }
     
     public function addComment (Request $request,$orderId)
@@ -301,8 +329,6 @@ class OrderController extends Controller
     	$input = $request->all();
     	//print_r($input);
     	//exit;
-    	
-    	
     	$id = Auth::user()->users_id;
     	$input['fk_order']  = $orderId;
     	$input['created_by']  =  $id;
@@ -310,6 +336,9 @@ class OrderController extends Controller
     	return redirect()->to("/order/".$orderId);
     	
     }
+    
+
+
 
 
 }

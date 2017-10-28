@@ -17,9 +17,9 @@ class ShipmentProduct extends Migration
         
     	Schema::create('shipment_product', function (Blueprint $table) {
     		$table->increments('shipment_product_id',15);
-    		$table->integer('fk_shipment');
-    		$table->integer('fk_order');
-    		$table->integer('fk_order_product');
+    		$table->integer('fk_shipment')->unsigned();
+    		$table->integer('fk_order')->unsigned();
+    		$table->integer('fk_order_product')->unsigned();
     		$table->integer('quantity')->default('0.00');
     		$table->integer('quantity_shipped')->default('0.00');
     		$table->text('attributes')->nullable();

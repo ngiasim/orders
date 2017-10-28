@@ -27,11 +27,7 @@
                             </div>
                         </div></td>
                         <td class="col-sm-1 col-md-1" style="text-align: center">
-                          @if($rows->options->qty_unlimited == 1)
-                              <input min="1" type="number" class="form-control" id="qty-filed-{{$rows->rowId}}" value="{{$rows->qty}}"><br>
-                          @else
-                                <input min="1" max="{{$rows->options->max_qty}}" type="number" class="form-control" id="qty-filed-{{$rows->rowId}}" value="{{$rows->qty}}"><br>
-                          @endif      
+                        <input min="1" max="5" type="number" class="form-control" id="qty-filed-{{$rows->rowId}}" value="{{$rows->qty}}"><br>
                         <button type="button" class="btn btn-xs btn-success" onclick="updatecart('{{$rows->rowId}}');">
                           <span class="glyphicon glyphicon-update"></span>Update
                         </button>
