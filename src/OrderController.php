@@ -326,6 +326,8 @@ class OrderController extends Controller
         return redirect()->to("/order/".$orderId);
         
     }
+<<<<<<< HEAD
+=======
     
     public function addComment (Request $request,$orderId)
     {
@@ -342,6 +344,7 @@ class OrderController extends Controller
     
 
 
+>>>>>>> 0852e5447fd4b2d4ffc0ca2cfd088f6cff2d2ccc
 
 
 }
