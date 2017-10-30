@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Country;
 use App\Models\Product_description;
 use App\Models\Language;
+use App\Lib\Helper;
 use App\Models\Product_status;
 use App\User;
 use App\Models\Order;
@@ -24,6 +25,8 @@ use App\Models\InventoryItemDetail;
 use App\Models\Address;
 use App\Models\Warehouse;
 use App\Models\Shipment;
+use App\Models\LogShipmentStatus;
+use App\Models\LogOrderStatus;
 use DB;
 
 class OrderController extends Controller
@@ -290,19 +293,23 @@ class OrderController extends Controller
         		 '0' =>'In Active',
         		 '1' =>'Active',	
         ];
-        $methods = [
-        	"method1"	=> "Method1",
-            "method2"	=> "Method2",
-        	"method3"	=> "Method3",
-        ];
+     
+        $methods  = Helper::getShipmentMethods();
         $shipment = new Shipment();
         $shippingDetail = $shipment->getShipment($orderId);
-    
-    
         $orderItemCount = count($order->orderItem);
         $createdItemCount = OrderItem::where('fk_order',$orderId)->where('fk_warehouse',">",0)->count();
-		$shippedItemCount = Shipment::where('fk_order',$orderId)->where('status',2)->count();
-        return view('orders::view',['shippedItemCount'=>$shippedItemCount,'orderItemCount'=>$orderItemCount,'createdItemCount'=>$createdItemCount,'shipping_details'=>$shippingDetail,'shipping_methods'=>$methods,'order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country,'statuses'=>$statuses]);
+	
+        // get shipment status logs
+        $logShipmentStatus = new LogShipmentStatus();
+        $shipmentStatuslogsData	=  $logShipmentStatus->getStatusLogs($orderId);
+        $orderStatuslogsData =[];
+        //get order status logs
+        $logOrderStatus = new LogOrderStatus();
+        $orderStatuslogsData  =  $logOrderStatus->getStatusLogs($orderId);
+
+      
+        return view('orders::view',['orderStatuslogsData'=>$orderStatuslogsData,'shipmentStatuslogsData'=>$shipmentStatuslogsData,'orderItemCount'=>$orderItemCount,'createdItemCount'=>$createdItemCount,'shipping_details'=>$shippingDetail,'shipping_methods'=>$methods,'order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country,'statuses'=>$statuses]);
     }
     
     public function saveAddress(Request $request)

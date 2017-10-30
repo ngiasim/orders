@@ -41,10 +41,11 @@
 <div class="main-center-area">
     <div class="row">
           <div class="page-header admin-header">
-              <h3 id="page-title">Order #{{$order->order_id}}</h3>
+              <h3 id="page-title">Order #{{$order->order_id}} ({{$order->orderStatus['status_name']}})</h3>
               <div class="order-heading-info">
                    Created By <span>Muhammad Fahim</span> on {{\Carbon\Carbon::parse($order->created_at)->toDayDateTimeString() }}
               </div>
+        
           </div>
      </div>
 
@@ -251,93 +252,7 @@
           </div>
           <!-- Order Info Code End Above -->
      </div>  --}}
-     <!-- Order Info Code row End Above -->
-<div class="row">
-          <!-- Order Info Code Start Below -->
-          <div class="panel panel-primary">
-               <div class="panel-heading">
-                    <h3 class="panel-title">Order Info</h3>
-               </div>
-               <div class="form-outer">
-                    <!-- -->
-                    <form class="form-horizontal">
-                         <fieldset>
 
-                              <!-- for Error Message you need to add class 'has-error' with 'form-group'-->
-                              <!-- Text input-->
-                        
-                              <div class="form-group col-md-12">
-                                   <label class="col-md-2 control-label" for="">Shipment Charges:</label>
-                                   <div class="col-md-10">
-                                        <!-- -->
-                                        <table class="table table-bordered no-margin-bottom">
-                                             <colgroup>
-                                                  <col span="1" style="width: 20%;">
-                                                  <col span="1" style="width: 13%;">
-                                                  <col span="1" style="width: 24%;">
-                                                  <col span="1" style="width: 14%;">
-                                                  <col span="1" style="width: 15%;">
-                                                  <col span="1" style="width: 14%;">
-                                             </colgroup>
-                                             <thead class="">
-                                                  <tr>
-                                                       <th>Shipment Charges ID</th>
-                                                       <th>Tracking ID</th>
-                                                   
-                                                       <th>Status</th>
-                                                       <th>Ship Date</th>
-                                                       <th>Response Date</th>
-                                                       <th>Refund</th>
-                                                       <th>Force Delivered</th>
-                                                  </tr>
-                                             </thead>
-                                             <tbody>
-                                             @if(count($shipping_details) > 0)
-                                             @foreach($shipping_details as $key=>$shipment)
-                                                  <tr>
-                                                       <td>{{$shipment->shipment_id}}</td>
-                                                       <td>{{$shipment->tracking}}</td>
-                                                       <td>{{$shipment->shipmentStatus['status_name']}}</td>
-                                                       <td>@if($shipment->shipmentStatus['shipment_status_id'] == 2) {{$shipment->updated_at}} @endif</td>
-                                                       <td>&nbsp;</td>
-                                                       <td><a href="" title="Make a Refund" class="new-line-txt-un">Make a Refund</a></td>
-                                                       <td>&nbsp;</td>
-                                                  </tr>
-                                                  @endforeach
-                                                @endif  
-                                             </tbody>
-                                        </table>
-                                        <!-- -->
-                                   </div>
-                              </div>
-                              <div class="form-group col-md-12">
-                                   <label class="col-md-2 control-label" for="">Automatic Charges:</label>
-                                   <div class="col-md-10">
-                                        <!-- -->
-                                        <!-- Multiple Radios (inline) -->
-                                             <div class="form-group">
-                                                  <div class="control-label txt-align-left">
-                                                       <label class="radio-inline" for="radios-0">
-                                                            <input type="radio" name="radios" id="radios-0" value="1" checked="checked" maxlength="" tabindex="11">
-                                                            <span>Enabled</span>
-                                                       </label>
-                                                       <label class="radio-inline" for="radios-1">
-                                                            <input type="radio" name="radios" id="radios-1" value="2" maxlength="" tabindex="12">
-                                                            <span>Disabled</span>
-                                                       </label>
-                                                  </div>
-                                             </div>
-                                        <!-- -->
-                                   </div>
-                              </div>
-                     
-                         </fieldset>
-                    </form>
-                    <!-- -->
-               </div>
-          </div>
-          <!-- Order Info Code End Above -->
-     </div>
      <!-- Shipping/Billing Detail Code row Start Below -->
      <div class="row">
 
@@ -429,16 +344,7 @@
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
-                                   <div class="form-group">
-                                        <label class="col-md-4 control-label" for="">Shipping Method:</label>
-                                        <div class="col-md-8">
-                                             <select name="country" id="country" class="form-control" tabindex="23">
-                                                  <option value="0" label="Select a Shipping Method … " selected="selected">Shipping Method …</option>
-                                                  <option value="" label="Fedex International">Fedex International</option>
-                                                       <option value="" label="Fedex International">Fedex International</option>
-                                             </select>
-                                        </div>
-                                   </div>
+               
 
                                    <!-- Button -->
                                    <div class="form-group col-md-12 button-area">
@@ -569,14 +475,7 @@
                                              <!--<span class="help-block">help</span>-->
                                         </div>
                                    </div>
-                                   <div class="form-group">
-                                        <label class="col-md-4 control-label" for="">Pending Paypal Payment:</label>
-                                        <div class="col-md-8 control-label txt-align-left"><a href="" title="Confirm Paypal Payment" class="new-line-txt-un">Confirm Paypal Payment</a></div>
-                                   </div>
-                                   <div class="form-group">
-                                        <label class="col-md-4 control-label" for="">Duty Status:</label>
-                                        <div class="col-md-8 control-label txt-align-left"><span class="new-line-txt-un">NA</span ></div>
-                                   </div>
+                    
 
                                    <!-- Button -->
                                    <div class="form-group col-md-12 button-area">
@@ -703,7 +602,89 @@
           </div>
      </div> 
      <!-- Comments History Code row Start Below -->
+     <!-- Order Info Code row End Above -->
+<div class="row">
+          <!-- Order Info Code Start Below -->
+          <div class="panel panel-primary">
+               <div class="panel-heading">
+                    <h3 class="panel-title">Shipment Info</h3>
+               </div>
+               <div class="form-outer">
+                    <!-- -->
+                    <form class="form-horizontal">
+                         <fieldset>
 
+                              <!-- for Error Message you need to add class 'has-error' with 'form-group'-->
+                              <!-- Text input-->
+                
+                                   <div class="col-md-12">
+                                        <!-- -->
+                                        <table class="table table-bordered no-margin-bottom">
+                                             <colgroup>
+                                                  <col span="1" style="width: 10%;">
+                                                  <col span="1" style="width: 13%;">
+                                                  <col span="1" style="width: 15%;">
+                                                   <col span="1" style="width: 15%;">
+                                                  <col span="1" style="width: 28%;">
+                                                  <col span="1" style="width: 15%;">
+                                                  <col span="1" style="width: 14%;">
+                                             </colgroup>
+                                             <thead class="">
+                                                  <tr>
+                                                       <th>Shipment Charges ID</th>
+                                                       <th>Tracking ID</th>
+                                                       <th>Status</th>
+                                                       <th>Shipment Method </th>
+                                                       <th>Date Log</th>
+                                                       <th>Response Date</th>
+                                                       <th>Action</th>
+                                                  </tr>
+                                             </thead>
+                                             <tbody>
+                                             @if(count($shipping_details) > 0)
+                                             @foreach($shipping_details as $key=>$shipment)
+                                                  <tr>
+                                                       <td>{{$shipment->shipment_id}}</td>
+                                                       <td>{{$shipment->tracking}}</td>
+                                                       <td>{{$shipment->shipmentStatus['status_name']}}</td>
+                                                       <td>{{$shipment->shipment_method}}</td>
+                                                       <td>  
+                                                       @if(count($shipment->shipmentStatusLog) > 0)
+                                                       @foreach($shipment->shipmentStatusLog as $key=>$log)
+                                                       @if($log->fk_shipment_status_to == 1)
+                                                       Created: {{App\Lib\Helper::formatDateTime($log->created_at)}} <br/> 
+                                                       @endif
+                                                       @if($log->fk_shipment_status_to == 2)
+                                                       Shipped:{{App\Lib\Helper::formatDateTime($log->created_at)}}  <br/> 
+                                                       @endif
+                                                       @endforeach
+                                                       @endif
+                                                       </td>
+                                                       <td>&nbsp;</td>
+                                                    
+                                                       <td> 
+                                                       @if($shipment->status == 1)   
+			                                        	<a href="{{URL::to('/order/ship/'.$shipment->fk_order.'/'.$shipment->shipment_id)}}" class="btn btn-primary">Ship</a>
+			                             			  @elseif($shipment->status == 2)
+			                             			  	<a href="#" class="btn btn-primary">Force to Deliver</a>
+			                             			  @endif
+			                             			  </td>
+                                                  </tr>
+                                                  @endforeach
+                                                @endif  
+                                             </tbody>
+                                        </table>
+                                        <!-- -->
+                                   </div>
+                        
+                     
+                         </fieldset>
+                    </form>
+                    <!-- -->
+               </div>
+          </div>
+          <!-- Order Info Code End Above -->
+     </div>
      <!-- Item Orders Code row Start Below -->
     {{--  <div class="row">
           <!-- Item Orders Code Start Below -->
@@ -994,7 +975,11 @@
                                              </colgroup>
                                              <thead class="">
                                                   <tr>
-                                                   	<th>Warehouses</th> 
+                                                   	<th>Warehouses     
+                                                   	<a href="javascript:void(0)" onclick = "resetWarehouses();" >
+          													<span class="glyphicon glyphicon-refresh"></span>
+        												</a>
+        												</th> 
                                                      <!--  <th>Ship Qty</th> 
                                                        <th>Item #</th> -->
                                                        <th>Image</th>
@@ -1094,7 +1079,7 @@
 			                        </div>
 			                        
 			                        <div class=" col-md-12 ">
-			                         	{!! Form::select('method',[""=>'Select Method']+$shipping_methods,null,array('class' => 'form-control input-md')) !!}
+			                         	{!! Form::select('shipment_method',[""=>'Select Method']+$shipping_methods,null,array('class' => 'form-control input-md')) !!}
 			                        </div>
 			                           <div class="col-md-12 button-area">
 		                                   <div class="col-md-1 ">
@@ -1105,13 +1090,7 @@
 		                            
 		                            @endif  
 		                            
-		                            @if($createdItemCount > 0 && $createdItemCount != $shippedItemCount)
-		                              <div class="col-md-12 button-area">
-		                                   <div class="col-md-1 ">
-		                                        <button id="ship" name="ship" value="ship" class="btn btn-primary">Ship</button>
-		                                   </div>
-		                              </div>
-		                            @endif
+		           
                                  </div> 
                                         <!-- -->
                                    </div>
@@ -1257,72 +1236,25 @@
                                         <thead class="">
                                              <tr>
                                                   <th>DATE</th>
-                                                  <th>ORDER ID</th>
-                                                  <th>ACTION</th>
+                                                  <th>FROM</th>
+                                                  <th>TO</th>
                                                   <th>USER NAME</th>
                                              </tr>
                                         </thead>
                                         <tbody>
+                                  
+                                        @if( count($orderStatuslogsData) > 0 )
+                                       @foreach($orderStatuslogsData as $key=>$value)
                                              <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
+                                                  <td>{{App\Lib\Helper::formatDate($value->created_at)}}</td>
+                                            
+                                                  <td>{{!empty($value->fromStatus['status_name'])?$value->fromStatus['status_name']:"-"}}</td>
+                                                  <td>{{$value->toStatus['status_name']}}</td>
+                                                  <td>{{$value->user['first_name']}}</td>
                                              </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>206347</td>
-                                                  <td>Dispatch/Return done</td>
-                                                  <td>dev</td>
-                                             </tr>
+                                          @endforeach   
+                                       @endif 
+                                         
                                         </tbody>
                                    </table>
                                    <!-- -->
@@ -1341,7 +1273,7 @@
                <!-- Customer Status Change Log Code Start Below -->
                <div class="panel panel-primary">
                     <div class="panel-heading">
-                         <h3 class="panel-title">Customer Status Change Log</h3>
+                         <h3 class="panel-title">Shipment Status Change Log</h3>
                     </div>
                     <div class="form-outer">
                          <!-- All Customer Comments Section Start Below -->
@@ -1358,72 +1290,25 @@
                                         <thead class="">
                                              <tr>
                                                   <th>DATE</th>
+                                                  <th>Shipment ID</th>
                                                   <th>FROM</th>
                                                   <th>TO</th>
                                                   <th>USER NAME</th>
                                              </tr>
                                         </thead>
                                         <tbody>
+                                       @if( count($shipmentStatuslogsData) > 0 )
+                                       @foreach($shipmentStatuslogsData as $key=>$value)
                                              <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
+                                                  <td>{{App\Lib\Helper::formatDate($value->created_at)}}</td>
+                                                  <td>{{$value->fk_shipment}}</td>
+                                                  <td>{{!empty($value->fromStatus['status_name'])?$value->fromStatus['status_name']:"-"}}</td>
+                                                  <td>{{$value->toStatus['status_name']}}</td>
+                                                  <td>{{$value->user['first_name']}}</td>
                                              </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
-                                             <tr>
-                                                  <td>Aug 18, 2017</td>
-                                                  <td>Verified</td>
-                                                  <td>Excellent</td>
-                                                  <td>dev</td>
-                                             </tr>
+                                          @endforeach   
+                                       @endif 
+                                         
                                         </tbody>
                                    </table>
                                    <!-- -->
@@ -1505,7 +1390,15 @@
 		  $('.warehouse option[value!="'+this.value+'"]').attr('disabled',true);
 		  $('.warehouse option[value="0"]').attr('disabled',false);
 		}
-	})
+	});
+	
+	function resetWarehouses()
+	{
+		var inputs = document.getElementsByClassName('warehouse');
+		for(var i = 0; i < inputs.length; i++) {
+		    inputs[i].disabled = false;
+		}
+	}
    	</script>
    @endsection 
    

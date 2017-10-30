@@ -36,6 +36,7 @@ Route::group([
 		], function () {
 			/////****** shipments ********/////
 			Route::post('/order/update/{id}','ngiasim\orders\ShipmentController@updateOrder');
+			Route::get('/order/ship/{orderId}/{shipmentId}','ngiasim\orders\ShipmentController@ship');
 			/////****** shipments ********/////
 			
 		});

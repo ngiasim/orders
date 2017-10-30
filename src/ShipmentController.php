@@ -26,13 +26,13 @@ class ShipmentController extends Controller
 			
 			$this->pick($input,$orderId);
 		}
-		
+		/*
 		else if(isset($input['ship']))
 		{
 
 			$this->ship($input,$orderId);
 		}
-	
+		*/
 		return redirect()->to("/order/".$orderId);
 		
 	}
@@ -46,7 +46,8 @@ class ShipmentController extends Controller
 		
 		if(count($input['warehouse']) > 0)
 		{	
-		
+			// make order status in process
+			
 			$orderItemIds =[];
 			foreach($input['warehouse'] as $orderItemId=>$warehouse)
 			{
@@ -59,8 +60,9 @@ class ShipmentController extends Controller
 				}
 			}
 		}
+	
 		 $shipment  = new Shipment();
-		 $shipmentId	=  $shipment->createShipment($orderItemIds,$orderId);
+		 $shipmentId	=  $shipment->createShipment($orderItemIds,$orderId,$input);
 		 //3- call to third party give you tracking no and details
 		 $response =  $this->shippingThirdPartyCall();	
 		 $shipment->updateShipment($response,$shipmentId);
@@ -69,22 +71,20 @@ class ShipmentController extends Controller
 
 	public function shippingThirdPartyCall()
 	{
-		$response = ['tracking_no'=>'123456'];
+		$response = ['tracking_no'=>uniqid()];
 		return $response;
 	}
-	public function ship($input,$orderId)
+	public function ship($orderId,$shipmentId)
 	{	
-
 		//update shipment status using orderId
 		$shipment  = new Shipment();
 		// from created to shipped
 		$from = 1;
 		$to = 2;
-		$shipment->updateShipmentStatus($from,$to,$orderId);
-		$order =  new Order();
-		$order->updateInventoryAndLogs($orderId);
-		//2- inventory update, warehouse_logs update
+		$shipment->updateShipmentStatus($from,$to,$orderId,$shipmentId);
+		$shipment->updateInventoryAndLogs($orderId,$shipmentId);
 		
+		return redirect()->to("/order/".$orderId);
 		//any forceship ??
 		//ship quantity update to order_item and shipment_product
 		
