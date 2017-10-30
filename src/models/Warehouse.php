@@ -15,4 +15,16 @@ class Warehouse extends Model
     {
     	return $this->hasMany('App\Models\LogWarehouseTotal', 'warehouse_id', 'log_warehouse_total_id');
     }
+    
+    public function getWarehouses()
+    {
+    	 
+    	 
+    	$warehouses = Warehouse::pluck('name','warehouse_id')->toArray();
+    
+    
+    	return $warehouses;
+    }
+    
+    
 }

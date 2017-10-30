@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\InventoryItem;
 use App\Models\Address;
 use App\Models\Warehouse;
 use App\Models\Shipment;
@@ -15,13 +16,34 @@ use DB;
 
 class ShipmentController extends Controller
 {
-	public function pick(Request $request,$orderId)
+	
+	public function updateOrder (Request $request,$orderId)
 	{
 		$input = $request->all();
+	
+		if(isset($input['pick']))
+		{
+			
+			$this->pick($input,$orderId);
+		}
+		
+		else if(isset($input['ship']))
+		{
+
+			$this->ship($input,$orderId);
+		}
+	
+		return redirect()->to("/order/".$orderId);
+		
+	}
+	public function pick($input,$orderId)
+	{
+
 		
 		//#todo : VV assign warehouse  --- it should check quantity available ,if not then dont need to create shipment of this item.
 		//#todo : VV  shiping method is in shipment table  
 		//#todo : question if only one product ship among 2 then shipment total contain product total
+		
 		if(count($input['warehouse']) > 0)
 		{	
 		
@@ -42,7 +64,7 @@ class ShipmentController extends Controller
 		 //3- call to third party give you tracking no and details
 		 $response =  $this->shippingThirdPartyCall();	
 		 $shipment->updateShipment($response,$shipmentId);
-		 return redirect()->to("/order/".$orderId);
+		 
 	}
 
 	public function shippingThirdPartyCall()
@@ -50,12 +72,22 @@ class ShipmentController extends Controller
 		$response = ['tracking_no'=>'123456'];
 		return $response;
 	}
-	public function ship()
+	public function ship($input,$orderId)
 	{	
-		//any forceship ??
-		//status logs used instead of shipped ,canceled ,delivered
+
+		//update shipment status using orderId
+		$shipment  = new Shipment();
+		// from created to shipped
+		$from = 1;
+		$to = 2;
+		$shipment->updateShipmentStatus($from,$to,$orderId);
+		$order =  new Order();
+		$order->updateInventoryAndLogs($orderId);
 		//2- inventory update, warehouse_logs update
+		
+		//any forceship ??
 		//ship quantity update to order_item and shipment_product
+		
 	}
 	
 }

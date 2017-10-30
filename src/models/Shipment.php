@@ -78,8 +78,33 @@ class Shipment extends Model
     public function getShipment($orderId)
     {
     	$shipment	= $this->with(array('shipmentStatus'))->where('fk_order',$orderId)->get();
-    	
- 
     	return $shipment;
+    }
+    
+    public function updateShipmentStatus($fromStatus,$toStatus,$orderId)
+    {
+    	$userId = Auth::user()->users_id;
+    	
+    	$shipmentDetail['status'] = $toStatus;
+    	$this->where('status',$fromStatus)->where('fk_order',$orderId)->update($shipmentDetail);
+    	
+    	$shipments = $this->where('status',$fromStatus)->where('fk_order',$orderId)->get();
+    	
+    	if(count($shipments) > 0){
+    		foreach($shipments as $key=>$shipment)
+    		{
+    			$logShipmentStatus = new LogShipmentStatus();
+    			$shipmentId = $shipment->shipment_id;
+    			$logShipmentStatus->fk_shipment = $shipmentId;
+    			$logShipmentStatus->fk_shipment_status_from =$fromStatus;
+    			$logShipmentStatus->fk_shipment_status_to =$toStatus;
+    			$logShipmentStatus->created_by= $userId ;
+    			$logShipmentStatus->updated_by= $userId ;
+    			$logShipmentStatus->save();
+    		}
+    	}
+    	 
+    	
+    	//fk_shipment,fk_shipment_status_from,fk_shipment_status_to,created_by,updated_by
     }
 }

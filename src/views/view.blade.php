@@ -298,7 +298,7 @@
                                                        <td>{{$shipment->shipment_id}}</td>
                                                        <td>{{$shipment->tracking}}</td>
                                                        <td>{{$shipment->shipmentStatus['status_name']}}</td>
-                                                       <td></td>
+                                                       <td>@if($shipment->shipmentStatus['shipment_status_id'] == 2) {{$shipment->updated_at}} @endif</td>
                                                        <td>&nbsp;</td>
                                                        <td><a href="" title="Make a Refund" class="new-line-txt-un">Make a Refund</a></td>
                                                        <td>&nbsp;</td>
@@ -979,7 +979,7 @@
                                         <!-- -->
                                         <table class="table table-bordered no-margin-bottom">
                                              <colgroup>
-                                                  <col span="1" style="width: 15%;"><!--10-->
+                                                  <col span="1" style="width: 20%;"><!--10-->
                                                   <col span="1" style="width: 7%;"><!--17-->
                                                   <col span="1" style="width: 12%;"><!--29-->
                                                   <col span="1" style="width: 9%;"><!--39-->
@@ -1012,9 +1012,9 @@
                                                        <td>
                                                              <div class="col-md-12 control-label no-padding">
                                                               @if($item->fk_warehouse > 0)
-                                                              {!! Form::select('warehouse['.$item->order_product_id.']',["0"=>'Select Warehouse']+$warehouses,$item->fk_warehouse,array('class' => 'form-control warehouse','disabled'=>'disabled','maxlength'=>"",'tabindex'=>"40",'style'=>'font-size: 9px;')) !!}
+                                                              {!! Form::select('warehouse['.$item->order_product_id.']',["0"=>'Select Warehouse']+$item->warehouses,$item->fk_warehouse,array('class' => 'form-control warehouse','disabled'=>'disabled','maxlength'=>"",'tabindex'=>"40",'style'=>'font-size: 9px;')) !!}
                                                               @else
-                                                              {!! Form::select('warehouse['.$item->order_product_id.']',["0"=>'Select Warehouse']+$warehouses,$item->fk_warehouse,array('class' => 'form-control warehouse','maxlength'=>"",'tabindex'=>"40",'style'=>'font-size: 9px;')) !!}
+                                                              {!! Form::select('warehouse['.$item->order_product_id.']',["0"=>'Select Warehouse']+$item->warehouses,$item->fk_warehouse,array('class' => 'form-control warehouse','maxlength'=>"",'tabindex'=>"40",'style'=>'font-size: 9px;')) !!}
                                                               @endif
                                                                
                                                             </div>
@@ -1098,7 +1098,7 @@
 			                        </div>
 			                           <div class="col-md-12 button-area">
 		                                   <div class="col-md-1 ">
-		                                        <button id="pick" name="pick" class="btn btn-primary">Pick</button>
+		                                        <button id="pick" name="pick"  value="pick" class="btn btn-primary">Pick</button>
 		                                   </div>
 		                              </div>
 		                            
@@ -1108,7 +1108,7 @@
 		                            @if($shipItemCount > 0)
 		                              <div class="col-md-12 button-area">
 		                                   <div class="col-md-1 ">
-		                                        <button id="ship" name="ship" class="btn btn-primary">Ship</button>
+		                                        <button id="ship" name="ship" value="ship" class="btn btn-primary">Ship</button>
 		                                   </div>
 		                              </div>
 		                            @endif

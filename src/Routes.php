@@ -35,7 +35,7 @@ Route::group([
 				'middleware' => ['auth']
 		], function () {
 			/////****** shipments ********/////
-			Route::post('/order/update/{id}','ngiasim\orders\ShipmentController@pick');
+			Route::post('/order/update/{id}','ngiasim\orders\ShipmentController@updateOrder');
 			/////****** shipments ********/////
 			
 		});
