@@ -21,9 +21,13 @@ use App\Models\ProductOptionValue;
 use App\Models\InventoryItem;
 use App\Models\OrderComment;
 use App\Models\InventoryItemDetail;
+<<<<<<< HEAD
 use App\Models\Address;
 use App\Models\Warehouse;
 use App\Models\Shipment;
+=======
+use App\Models\Currency;
+>>>>>>> 42e337b15988f81b0f09718742305d8b3f7144ce
 use DB;
 
 class OrderController extends Controller
@@ -31,20 +35,25 @@ class OrderController extends Controller
 
   public function phoneOrder()
   {
-       //dd(\Session::all());
-       $inventoryObj = InventoryItem::where('inventory_id', '=', 8)
-       ->with(array('inventoryItemDetail' => function($query) {
-              $query->with('productOption');
-              $query->with('productOptionValue');
-        }))->get();
-
-       //dd($inventoryObj);
        $cartItems = Cart::content();
        $total = Cart::total();
        $total_tax = Cart::tax();
        $customer_id = \Session::get('customer_id');
        $customers =  User::where('users_id', '=', $customer_id)->get();
-       return view('orders::index', compact('cartItems','total','total_tax','customer_id','customers'));
+
+       $pre_selected_region_country = \Session::get('region_country');
+       $pre_selected_checkout_currency = \Session::get('checkout_currency');
+
+
+       $curr_reg_country_numm = Country::where('country_id', '=', $pre_selected_region_country)->get();
+       $curr_num = Currency::where('currency_id', '=', $pre_selected_checkout_currency)->get();
+
+       $currencies = Currency::pluck('code', 'currency_id');
+       $countries = Country::pluck('name', 'country_id');
+
+       $checkout_currency_symbol_right = $curr_num[0]->symbol_right;
+       //dd($currencies);
+       return view('orders::index', compact('checkout_currency_symbol_right','curr_num','curr_reg_country_numm','cartItems','total','total_tax','customer_id','customers','currencies','countries'));
   }
 
   public function getProductsByProductId($id)
@@ -84,6 +93,14 @@ class OrderController extends Controller
         and product_id = mpii.fk_product
         and product_id ='.$option->product_id);
        //dd($products_attributes);
+      $region_country = \Session::get('region_country');
+ 			$checkout_currency = \Session::get('checkout_currency');
+
+ 			$reg_currency_data = Country::where('country_id', '=', $region_country)->get();
+ 			$checout_currency_data = Currency::where('currency_id', '=', $checkout_currency)->get();
+
+      $objCurrency = new Currency();
+
         $json_cook_atributes_product ;
         $cook_atributes_product ;
         foreach ($products_attributes as $pa ) {
@@ -98,6 +115,13 @@ class OrderController extends Controller
               $cook_atributes_product[$pa->products_sku][$pa->option_name] = array_unique($cook_atributes_product[$pa->products_sku][$pa->option_name]);
               $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["options"][$pa->option_name]=$pa->name;
               $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_id"] = $pa->inventory_id;
+              //dd($objCurrency->Conversion(1, $checout_currency_data[0]->conversion_rate, $pa->inventory_price));
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_price"] = $objCurrency->Conversion(1, $checout_currency_data[0]->conversion_rate, $pa->inventory_price); //$pa->inventory_price;
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["inventory_price_prefix"] = $pa->inventory_price_prefix;
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["checkout_currency_symbol_left"] = $checout_currency_data[0]->symbol_left;
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["checkout_currency_symbol_right"] = $checout_currency_data[0]->symbol_right;
+              $json_cook_atributes_product[$pa->products_sku][$pa->inventory_code]["product_price"] = $objCurrency->Conversion(1, $checout_currency_data[0]->conversion_rate, $pa->base_price); // $pa->base_price;
+
            }
         }
 
@@ -131,6 +155,11 @@ class OrderController extends Controller
         $cartItems = Cart::content();
         $total = Cart::total() - Cart::tax();
         $customer_id = \Session::get('customer_id');
+        $region_country = \Session::get('region_country');
+   			$checkout_currency = \Session::get('checkout_currency');
+
+   			$reg_currency_data = Country::where('country_id', '=', $region_country)->get();
+   			$checout_currency_data = Currency::where('currency_id', '=', $checkout_currency)->get();
 
         // if(
         //     Auth::user()->charge($total*100, [
@@ -167,7 +196,7 @@ class OrderController extends Controller
                 $orderItem->products_price=$item->price;
                 $orderItem->ordered_quantity=$item->qty;
                 $orderItem->peritem_tax= ($item->price*($item->taxRate/100))*$item->qty; // $item->id;
-                $orderItem->fk_warehouse = 1;
+                $orderItem->fk_warehouse = 0;
                 $orderItem->save();
                 Cart::remove($item->rowId);
               }
@@ -278,8 +307,10 @@ class OrderController extends Controller
         //get customer detail
         //order detail
         $user = new User();
+
         $input['customer_id'] = $order->fk_customer;    
         $custumerData = $user->customerQuery($input)->get();  
+
         // get address details
 		// statuses list
         $statuses = 
@@ -323,7 +354,7 @@ class OrderController extends Controller
         return redirect()->to("/order/".$orderId);
         
     }
-    
+
     public function addComment (Request $request,$orderId)
     {
     	$input = $request->all();
@@ -334,11 +365,10 @@ class OrderController extends Controller
     	$input['created_by']  =  $id;
     	OrderComment::create($input);
     	return redirect()->to("/order/".$orderId);
-    	
+
     }
+
     
-
-
 
 
 }

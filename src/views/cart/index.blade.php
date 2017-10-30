@@ -27,13 +27,17 @@
                             </div>
                         </div></td>
                         <td class="col-sm-1 col-md-1" style="text-align: center">
-                        <input min="1" max="5" type="number" class="form-control" id="qty-filed-{{$rows->rowId}}" value="{{$rows->qty}}"><br>
+                          @if($rows->options->qty_unlimited == 1)
+                              <input min="1" type="number" class="form-control" id="qty-filed-{{$rows->rowId}}" value="{{$rows->qty}}"><br>
+                          @else
+                                <input min="1" max="{{$rows->options->max_qty}}" type="number" class="form-control" id="qty-filed-{{$rows->rowId}}" value="{{$rows->qty}}"><br>
+                          @endif
                         <button type="button" class="btn btn-xs btn-success" onclick="updatecart('{{$rows->rowId}}');">
                           <span class="glyphicon glyphicon-update"></span>Update
                         </button>
                         </td>
-                        <td class="col-sm-1 col-md-1 text-center"><strong>{{$rows->price}}</strong></td>
-                        <td class="col-sm-1 col-md-1 text-center"><strong>{{$rows->subtotal}}</strong></td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>{{$rows->price}} {{$checkout_currency_symbol_right}}</strong></td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>{{$rows->subtotal}} {{$checkout_currency_symbol_right}}</strong></td>
                         <td class="col-sm-1 col-md-1">
                           <!-- <button type='button' onclick='addtocart(".$row->product_id.");' class='btn-danger glyphicon glyphicon-remove'></button> -->
                           <button type="button" class="btn btn-danger" onclick="deletecartitem('{{$rows->rowId}}');">
@@ -49,7 +53,7 @@
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td><h5>Item total<br>Tax<br>Shipping</h5><h3>Total</h3></td>
-                        <td class="text-right"><h5><strong>{{$var}}<br>{{$total_tax}}<br>free</strong></h5><h3>{{$total}}</h3></td>
+                        <td class="text-right"><h5><strong>{{$var}} {{$checkout_currency_symbol_right}}<br>{{$total_tax}} {{$checkout_currency_symbol_right}}<br>free</strong></h5><h3>{{$total}} {{$checkout_currency_symbol_right}}</h3></td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
