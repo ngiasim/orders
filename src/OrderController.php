@@ -335,5 +335,19 @@ class OrderController extends Controller
 
     }
 
+    public function addComment (Request $request,$orderId)
+    {
+    	$input = $request->all();
+    	//print_r($input);
+    	//exit;
+
+
+    	$id = Auth::user()->users_id;
+    	$input['fk_order']  = $orderId;
+    	$input['created_by']  =  $id;
+    	OrderComment::create($input);
+    	return redirect()->to("/order/".$orderId);
+
+    }
 
 }
