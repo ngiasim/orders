@@ -298,9 +298,11 @@ class OrderController extends Controller
         $shipment = new Shipment();
         $shippingDetail = $shipment->getShipment($orderId);
     
+    
         $orderItemCount = count($order->orderItem);
-        $shipItemCount =OrderItem::where('fk_order',$orderId)->where('fk_warehouse',">",0)->count();
-        return view('orders::view',['orderItemCount'=>$orderItemCount,'shipItemCount'=>$shipItemCount,'shipping_details'=>$shippingDetail,'shipping_methods'=>$methods,'order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country,'statuses'=>$statuses]);
+        $createdItemCount = OrderItem::where('fk_order',$orderId)->where('fk_warehouse',">",0)->count();
+		$shippedItemCount = Shipment::where('fk_order',$orderId)->where('status',2)->count();
+        return view('orders::view',['shippedItemCount'=>$shippedItemCount,'orderItemCount'=>$orderItemCount,'createdItemCount'=>$createdItemCount,'shipping_details'=>$shippingDetail,'shipping_methods'=>$methods,'order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country,'statuses'=>$statuses]);
     }
     
     public function saveAddress(Request $request)
@@ -343,3 +345,4 @@ class OrderController extends Controller
 
 
 }
+        
