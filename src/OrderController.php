@@ -185,8 +185,8 @@ class OrderController extends Controller
             $order->fk_order_status= 1;
             $order->order_final_total= Cart::total('2','.','');
             $order->orders_source= $input['source'];
-            $order->checkout_currency_code= $input['checkout_currency_code'];
-            $order->checkout_currency_rate= 1.0;
+            $order->checkout_currency_code= $checout_currency_data[0]->conversion_rate;
+            $order->checkout_currency_rate= $checout_currency_data[0]->conversion_rate;
             $order->fk_address_shipping= 1;
             $order->fk_address_billing= 2;
             $order->save();
@@ -318,21 +318,6 @@ class OrderController extends Controller
 
         // get address details
         return view('orders::view',['order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country]);
-    }
-
-    public function addComment (Request $request,$orderId)
-    {
-    	$input = $request->all();
-    	//print_r($input);
-    	//exit;
-
-
-    	$id = Auth::user()->users_id;
-    	$input['fk_order']  = $orderId;
-    	$input['created_by']  =  $id;
-    	OrderComment::create($input);
-    	return redirect()->to("/order/".$orderId);
-
     }
 
     public function addComment (Request $request,$orderId)
