@@ -21,13 +21,10 @@ use App\Models\ProductOptionValue;
 use App\Models\InventoryItem;
 use App\Models\OrderComment;
 use App\Models\InventoryItemDetail;
-<<<<<<< HEAD
 use App\Models\Address;
 use App\Models\Warehouse;
 use App\Models\Shipment;
-=======
 use App\Models\Currency;
->>>>>>> 42e337b15988f81b0f09718742305d8b3f7144ce
 use DB;
 
 class OrderController extends Controller
@@ -179,8 +176,8 @@ class OrderController extends Controller
             $order->fk_order_status= 1;
             $order->order_final_total= Cart::total();
             $order->orders_source= $input['source'];
-            $order->checkout_currency_code= $input['checkout_currency_code'];
-            $order->checkout_currency_rate= 1.0;
+            $order->checkout_currency_code= $checout_currency_data[0]->conversion_rate;
+            $order->checkout_currency_rate= $checout_currency_data[0]->conversion_rate;
             $order->fk_address_shipping= 1;
             $order->fk_address_billing= 2;
             $order->save();
@@ -367,8 +364,4 @@ class OrderController extends Controller
     	return redirect()->to("/order/".$orderId);
 
     }
-
-    
-
-
 }

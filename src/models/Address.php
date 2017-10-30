@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Address extends Model
 {
-	use SoftDeletes;
+	//use SoftDeletes;
     protected $table = 'address';
     protected $primaryKey = "address_id";
 
@@ -23,12 +23,12 @@ class Address extends Model
      protected function warehouseRules($except_id=""){
         $arr =  array(
             'line1'              => 'required|max:20',
-            'line2'              => 'max:20',   
-            'line3'              => 'max:20',               
+            'line2'              => 'max:20',
+            'line3'              => 'max:20',
             'city'               => 'required|max:20',
             'state'              => 'max:20',
-            'fk_country'         => 'required', 
-                 
+            'fk_country'         => 'required',
+
         );
         return $arr;
     }
@@ -58,7 +58,7 @@ class Address extends Model
         $address->state             = $request['state'];
         $address->fk_country        = $request['fk_country'];
         $address->save();
-        
+
     }
 
 
