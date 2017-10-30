@@ -1088,7 +1088,7 @@
 		                                        <button id="assign" name="assign" class="btn btn-primary">Assign</button>
 		                                   </div>
 		                              </div> -->
-		                              @if($orderItemCount != $shipItemCount)
+		                              @if($orderItemCount != $createdItemCount)
 			                        <div class="col-md-12 ">
 			                      		{{ Config::get('services.shipping.company_name')}}
 			                        </div>
@@ -1105,7 +1105,7 @@
 		                            
 		                            @endif  
 		                            
-		                            @if($shipItemCount > 0)
+		                            @if($createdItemCount > 0 && $createdItemCount != $shippedItemCount)
 		                              <div class="col-md-12 button-area">
 		                                   <div class="col-md-1 ">
 		                                        <button id="ship" name="ship" value="ship" class="btn btn-primary">Ship</button>
