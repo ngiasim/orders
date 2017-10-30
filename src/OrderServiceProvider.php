@@ -42,5 +42,6 @@ class OrderServiceProvider extends ServiceProvider
          include __DIR__.'/Routes.php';
          $this->app->make('Ngiasim\Orders\OrderController');
          $this->app->make('Ngiasim\Orders\CartController');
+         $this->app->make('Ngiasim\Orders\ShipmentController');
     }
 }

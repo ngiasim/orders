@@ -42,11 +42,11 @@ class ShipmentProduct extends Migration
     		 
     	});
     	
-    		/*Schema::table('shipment_product', function (Blueprint $table) {
-    		$table->foreign('fk_shipment')->references('shipment_id')->on('shipment');
-    		$table->foreign('fk_order')->references('order_id')->on('order');
-    		$table->foreign('fk_order_product')->references('order_product_id')->on('order_product');
-    		});*/
+    		Schema::table('shipment_product', function (Blueprint $table) {
+    		//$table->foreign('fk_shipment')->references('shipment_id')->on('shipment');
+    		//$table->foreign('fk_order')->references('order_id')->on('order');
+    		//$table->foreign('fk_order_product')->references('order_product_id')->on('order_product');
+    		});
     }
 
     /**

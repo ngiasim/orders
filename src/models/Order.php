@@ -90,12 +90,50 @@ class Order extends Model
 			   
 			   
 		  }
-		 
-		   $data->get()->sortBy(function($order) { 
-       				return  $order->orderBy('order_comment.created_at', 'desc');
-  			});
-		}
 
+		   	return $data->get();
+		}
+		public function listOrder ($orderId)
+		{
+			$order = Order::with(['billingAddress','shippingAddress','orderComment'])->find($orderId);
+			if(count($order->orderItem) > 0)
+			{
+				foreach ($order->orderItem  as $key=>&$value)
+				{
+					$inventoryId = $value->fk_inventory;
+					//$warehouseId = $value->fk_warehouse;
+					$LogWarehouseTotal= new LogWarehouseTotal();
+					$warehouses = $LogWarehouseTotal->getWarehouseWithQuantity($inventoryId);
+		
+					$value['warehouses'] =$warehouses;
+						
+		
+						
+				}
+			}
+		
+			return $order;
+		}
+		
+		public function updateInventoryAndLogs($orderId)
+		{
+				
+			// inventory update remaining
+			// get quantity from orderitem and deduct from reseved.total ,onhand qty
+				
+			$order = Order::find($orderId);
+			if(count($order->orderItem) > 0)
+			{
+				foreach ($order->orderItem  as $key=>&$value)
+				{
+					$inventoryId = $value->fk_inventory;
+					$warehouseId = $value->fk_warehouse;
+					$LogWarehouseTotal= new LogWarehouseTotal();
+					$quantity = $LogWarehouseTotal->addWarehouseLogs($warehouseId,$inventoryId,'-'.$value->ordered_quantity);
+				}
+			}
+		
+		}
     // public function productsDescription()
     // {
     //     return $this->hasOne('App\Product_description', 'fk_product', 'product_id');

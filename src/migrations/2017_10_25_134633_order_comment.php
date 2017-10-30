@@ -29,7 +29,7 @@ class OrderComment extends Migration
     	});
     	
     		Schema::table('order_comment', function (Blueprint $table) {
-    				$table->foreign('fk_order')->references('order_id')->on('order');
+    				//$table->foreign('fk_order')->references('order_id')->on('order');
     		});
     }
 

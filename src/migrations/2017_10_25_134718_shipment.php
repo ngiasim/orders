@@ -50,7 +50,7 @@ class Shipment extends Migration
     	});
     	
     		Schema::table('shipment', function (Blueprint $table) {
-    			$table->foreign('fk_order')->references('order_id')->on('order');
+    			//$table->foreign('fk_order')->references('order_id')->on('order');
     		});
     }
 
