@@ -651,11 +651,12 @@
                                                        <td>  
                                                        @if(count($shipment->shipmentStatusLog) > 0)
                                                        @foreach($shipment->shipmentStatusLog as $key=>$log)
-                                                       @if($log->fk_shipment_status_to == 1)
-                                                       Created: {{App\Lib\Helper::formatDateTime($log->created_at)}} <br/> 
-                                                       @endif
+                                                     
                                                        @if($log->fk_shipment_status_to == 2)
                                                        Shipped:{{App\Lib\Helper::formatDateTime($log->created_at)}}  <br/> 
+                                                       @endif
+                                                        @if($log->fk_shipment_status_to == 3)
+                                                       Delivery:{{App\Lib\Helper::formatDateTime($log->created_at)}}  <br/> 
                                                        @endif
                                                        @endforeach
                                                        @endif
@@ -663,10 +664,9 @@
                                                        <td>&nbsp;</td>
                                                     
                                                        <td> 
-                                                       @if($shipment->status == 1)   
-			                                        	<a href="{{URL::to('/order/ship/'.$shipment->fk_order.'/'.$shipment->shipment_id)}}" class="btn btn-primary">Ship</a>
-			                             			  @elseif($shipment->status == 2)
-			                             			  	<a href="#" class="btn btn-primary">Force to Deliver</a>
+                                                       @if($shipment->status == 2)   
+			                                        	<a href="{{URL::to('/order/deliver/'.$shipment->fk_order.'/'.$shipment->shipment_id)}}" class="btn btn-primary">Deliver</a>
+			                             			
 			                             			  @endif
 			                             			  </td>
                                                   </tr>

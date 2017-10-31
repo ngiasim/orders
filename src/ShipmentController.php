@@ -74,18 +74,17 @@ class ShipmentController extends Controller
 		$response = ['tracking_no'=>uniqid()];
 		return $response;
 	}
-	public function ship($orderId,$shipmentId)
+	public function deliver($orderId,$shipmentId)
 	{	
 		//update shipment status using orderId
 		$shipment  = new Shipment();
 		// from created to shipped
-		$from = 1;
-		$to = 2;
+		$from = 2;
+		$to = 3;
 		$shipment->updateShipmentStatus($from,$to,$orderId,$shipmentId);
 		$shipment->updateInventoryAndLogs($orderId,$shipmentId);
 		
 		return redirect()->to("/order/".$orderId);
-		//any forceship ??
 		//ship quantity update to order_item and shipment_product
 		
 	}
