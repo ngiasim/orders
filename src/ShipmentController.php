@@ -12,6 +12,9 @@ use App\Models\InventoryItem;
 use App\Models\Address;
 use App\Models\Warehouse;
 use App\Models\Shipment;
+use App\Models\ShipmentStatus;
+use App\Models\ShipmentProduct;
+use App\Models\LogWarehouseTotal;
 use DB;
 
 class ShipmentController extends Controller
@@ -21,51 +24,76 @@ class ShipmentController extends Controller
 	{
 		$input = $request->all();
 	
+		
 		if(isset($input['pick']))
 		{
 			
 			$this->pick($input,$orderId);
 		}
-		/*
-		else if(isset($input['ship']))
+		
+		else if(isset($input['cancel']))
 		{
 
-			$this->ship($input,$orderId);
+			$this->cancel($input,$orderId);
 		}
-		*/
+		
 		return redirect()->to("/order/".$orderId);
+		
+	}
+	
+	public function cancel($inputData,$orderId)
+	{
+		
+		$orderItemId = $inputData['order_item_id'];
+		$cancelReasonId = $inputData['cancel_reason'];
+		$orderItem = new OrderItem();
+		$orderItem->cancelItem($orderItemId,$cancelReasonId,$orderId);
+		return redirect()->to("/order/".$orderId);
+
 		
 	}
 	public function pick($input,$orderId)
 	{
 
 		
-		//#todo : VV assign warehouse  --- it should check quantity available ,if not then dont need to create shipment of this item.
-		//#todo : VV  shiping method is in shipment table  
+		//assign warehouse  --- it should check quantity available ,if not then dont need to create shipment of this item.
 		//#todo : question if only one product ship among 2 then shipment total contain product total
 		
 		if(count($input['warehouse']) > 0)
 		{	
 			// make order status in process
-			
 			$orderItemIds =[];
 			foreach($input['warehouse'] as $orderItemId=>$warehouse)
 			{
 				if($warehouse != "0")
 				{
 					$orderItem = new OrderItem();
-					$orderDetail['fk_warehouse'] = $warehouse;
-					array_push($orderItemIds,$orderItemId);
-					$orderItem->where('order_product_id',$orderItemId)->update($orderDetail);	 
+					$orderItemDetail = $orderItem->where('order_product_id',$orderItemId)->first();
+					$orderedQuantity = $orderItemDetail->ordered_quantity;
+					$inventoryId = $orderItemDetail->fk_inventory;
+					$logWarehouseTotal = new LogWarehouseTotal();
+					 $availableQuantity = $logWarehouseTotal->getAvailableQuantity($warehouse ,$inventoryId);
+					// get order quantity and available quantity 
+					// check 
+					if($availableQuantity >= $orderedQuantity)
+					{
+						$orderDetail['fk_warehouse'] = $warehouse;
+						array_push($orderItemIds,$orderItemId);
+						$orderItem->where('order_product_id',$orderItemId)->update($orderDetail);	 
+					}
 				}
 			}
 		}
 	
 		 $shipment  = new Shipment();
 		 $shipmentId	=  $shipment->createShipment($orderItemIds,$orderId,$input);
-		 //3- call to third party give you tracking no and details
-		 $response =  $this->shippingThirdPartyCall();	
-		 $shipment->updateShipment($response,$shipmentId);
+		 //if shipment created
+		 if($shipmentId > 0)
+		 {
+			 //3- call to third party give you tracking no and details
+			 $response =  $this->shippingThirdPartyCall();	
+			 $shipment->updateShipment($response,$shipmentId);
+		 }
 		 
 	}
 
@@ -76,16 +104,19 @@ class ShipmentController extends Controller
 	}
 	public function deliver($orderId,$shipmentId)
 	{	
+		//#todo : ship quantity update to order_item and shipment_product
 		//update shipment status using orderId
 		$shipment  = new Shipment();
-		// from created to shipped
-		$from = 2;
-		$to = 3;
+		// from shipped to delivered
+		$from = ShipmentStatus::getStatusIdByCode(ShipmentStatus::SHIPPED);
+		$to = ShipmentStatus::getStatusIdByCode(ShipmentStatus::DELIVERED);
 		$shipment->updateShipmentStatus($from,$to,$orderId,$shipmentId);
 		$shipment->updateInventoryAndLogs($orderId,$shipmentId);
-		
+		//check all shipments done against order mark it as completed
+		$order = new Order();
+		$order->checkShipmentAndUpdateOrderStatus($orderId);
 		return redirect()->to("/order/".$orderId);
-		//ship quantity update to order_item and shipment_product
+	
 		
 	}
 	

@@ -10,7 +10,7 @@ use App\Models\Product;
 use App\Models\Country;
 use App\Models\Product_description;
 use App\Models\Language;
-use App\Lib\Helper;
+use App\Helpers\Helpers;
 use App\Models\Product_status;
 use App\User;
 use App\Models\Order;
@@ -27,6 +27,7 @@ use App\Models\Warehouse;
 use App\Models\Shipment;
 use App\Models\LogShipmentStatus;
 use App\Models\LogOrderStatus;
+use App\Models\CancelReason;
 use DB;
 
 class OrderController extends Controller
@@ -170,7 +171,7 @@ class OrderController extends Controller
                 $orderItem->products_price=$item->price;
                 $orderItem->ordered_quantity=$item->qty;
                 $orderItem->peritem_tax= ($item->price*($item->taxRate/100))*$item->qty; // $item->id;
-                $orderItem->fk_warehouse = 1;
+                $orderItem->fk_warehouse = 0;
                 $orderItem->save();
                 Cart::remove($item->rowId);
               }
@@ -275,9 +276,7 @@ class OrderController extends Controller
     }
 
     public function viewOrder($orderId){
-       
         $country = Country::pluck('name','country_id')->toArray();
-
         $orderObj = new Order();
         $order = $orderObj->listOrder($orderId);
         //get customer detail
@@ -294,7 +293,7 @@ class OrderController extends Controller
         		 '1' =>'Active',	
         ];
      
-        $methods  = Helper::getShipmentMethods();
+        $methods  = Helpers::getShipmentMethods();
         $shipment = new Shipment();
         $shippingDetail = $shipment->getShipment($orderId);
         $orderItemCount = count($order->orderItem);
@@ -307,9 +306,11 @@ class OrderController extends Controller
         //get order status logs
         $logOrderStatus = new LogOrderStatus();
         $orderStatuslogsData  =  $logOrderStatus->getStatusLogs($orderId);
-
-      
-        return view('orders::view',['orderStatuslogsData'=>$orderStatuslogsData,'shipmentStatuslogsData'=>$shipmentStatuslogsData,'orderItemCount'=>$orderItemCount,'createdItemCount'=>$createdItemCount,'shipping_details'=>$shippingDetail,'shipping_methods'=>$methods,'order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country,'statuses'=>$statuses]);
+  		$cancelReason	= new CancelReason();
+      	$cancelReasons = $cancelReason->getAllForDropdown();
+      	
+      	$orderStatuses = OrderStatus::pluck('status_name','status_code')->toArray();
+        return view('orders::view',['orderStatuses'=>$orderStatuses,'cancelReasons'=>$cancelReasons,'orderStatuslogsData'=>$orderStatuslogsData,'shipmentStatuslogsData'=>$shipmentStatuslogsData,'orderItemCount'=>$orderItemCount,'createdItemCount'=>$createdItemCount,'shipping_details'=>$shippingDetail,'shipping_methods'=>$methods,'order'=>$order,'customerData'=>$custumerData[0],'countries'=>$country,'statuses'=>$statuses]);
     }
     
     public function saveAddress(Request $request)
@@ -348,7 +349,41 @@ class OrderController extends Controller
     	
     }
     
-
+    public function updateStatus(Request $request,$orderId)
+    {
+    	
+    	$input = $request->all();
+    	$password = $input['supervisor_password'];
+    	$toOrderStatus = $input['order_status'];
+    	if(Helpers::verifySuperAdmin($password))
+    	{
+    		$orderDetail = Order::with('orderItem')->find($orderId)->toArray();
+    		if($toOrderStatus == OrderStatus::CANCELLED )
+    		{
+    			$cancelReasonId = $input['order_cancel_reason'];
+    		
+    			$orderItemIds = array_column($orderDetail['order_item'], 'order_product_id');
+    			
+    			
+    			$orderItem = new OrderItem();
+    			$orderItem->cancelItem($orderItemIds,$cancelReasonId,$orderId);
+    		}
+    		else {
+    			$fromOrderStatus = $orderDetail['fk_order_status'];
+    			$order = new Order();
+    			$order->updateOrderStatus($fromOrderStatus,OrderStatus::getStatusIdByCode($toOrderStatus),$orderId);
+    		}
+    		
+    		$response['success'] ="Order status updated successfully";
+    	}
+    	else 
+    	{
+    		$response['error'] = "Invalid supervisor password.Try Again!";
+    	}
+    	
+    	return $response;
+    	
+    }
 
 }
         

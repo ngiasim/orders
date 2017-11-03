@@ -47,8 +47,43 @@
               </div>
         
           </div>
-     </div>
+     </div> 
+     	{{  Form::open(array('url'=>'order/status_update/'.$order->order_id, 'method' => 'post','class'=>'form-horizontal','id'=>'updateOrderStatus')) }}	
+      <!-- Order Status Update Code Row Start Below -->   
+     <div class="form-group row ">
+			<div class="col-md-3 col-md-offset-9 ">
+				{!! Form::select('order_status',[""=>'Change Status']+$orderStatuses,$order->orderStatus['status_code'],array('id'=>'order_status','class' => 'form-control input-md')) !!}
+					</div>
+    				
+    </div>
 
+               		<div id="order_cancel_reason_div" style="display:none;">
+                   
+                       <div class="form-group row"> 
+                       <div class="col-md-4 col-md-offset-5">Please select the reason to cancel the order item.</div>
+                        <div class=" col-md-3 pull-right">                                        
+                     	{!! Form::select('order_cancel_reason',[""=>'Select Reason']+$cancelReasons,null,array('id'=>'order_cancel_reason','class' => 'form-control ','maxlength'=>"",'tabindex'=>"40",'style'=>'font-size: 9px;')) !!}                                             
+                   		</div>                
+	                </div>
+                
+                    </div>
+    <div id="supervisor_password"   style="display:none;" class="form-group row"> 
+	     <div class="col-md-2 col-md-offset-9 ">
+			{!! Form::text('supervisor_password', null, array('placeholder' => 'Enter Password','class' => 'form-control input-md')) !!}
+		 </div>
+	    <div class="col-md-1 pull-right">
+	         <button type="button" onclick="changeStatus('updateOrderStatus')" class="btn btn-primary"  name="password_submit" >OK</button>
+	    </div>
+	     <div id="messageDiv"   style="display:none;" class="form-group row ">   
+	     <p id="order_status_success" class="pull-right" style="color:green" >  </p>
+	     <p id="order_status_error" class="pull-right" style="color:red" >    </p>
+	     </div>
+	    
+    </div>
+    {{  Form::Close() }}
+     <!--  Order Status Update Code Row End -->
+    
+    
      <!-- Customer Info Code row Start Below -->
      <div class="row">
           <!-- Customer Info Code Start Below -->
@@ -532,7 +567,7 @@
                                                   @if(count($order['orderComment']) > 0 )
                                                   @foreach($order['orderComment'] as $key=>$comment)
                                                        <tr>
-                                                            <td>{{App\Lib\Helper::formatDate($comment->created_at)}}</td>
+                                                            <td>{{App\Helpers\Helpers::formatDate($comment->created_at)}}</td>
                                                             <td>@if($comment->is_emailed == '0') No @else  Yes @endif</td>
                                                             <td> {{$comment->user['first_name']." ".$comment->user['last_name']}}</td>
                                                             <td>{{$comment->subject}}</td>
@@ -653,10 +688,10 @@
                                                        @foreach($shipment->shipmentStatusLog as $key=>$log)
                                                      
                                                        @if($log->fk_shipment_status_to == 2)
-                                                       Shipped:{{App\Lib\Helper::formatDateTime($log->created_at)}}  <br/> 
+                                                       Shipped:{{App\Helpers\Helpers::formatDateTime($log->created_at)}}  <br/> 
                                                        @endif
                                                         @if($log->fk_shipment_status_to == 3)
-                                                       Delivery:{{App\Lib\Helper::formatDateTime($log->created_at)}}  <br/> 
+                                                       Delivered:{{App\Helpers\Helpers::formatDateTime($log->created_at)}}  <br/> 
                                                        @endif
                                                        @endforeach
                                                        @endif
@@ -985,6 +1020,7 @@
                                                        <th>Image</th>
                                                        <th>Name</th>
                                                        <th>Order/<br />Ship Qty</th>
+                                                       <th>Delete?</th>
                                                        <th>Retail</th>
                                                        <th>Discount</th>
                                                        <th>Purchase</th>
@@ -1045,7 +1081,15 @@
                                                             <!-- -->
                                                        </td>
                                                        <td class="txt-align-center">{{$item->ordered_quantity}}</td>
-                                                      
+                                                        <td class="txt-align-center">
+                                                            @if($item->fk_warehouse == 0 && $item->is_cancelled == 0)
+                                                        			<a href="javascript:void(0);" onclick="openCancelReason({{$item->order_product_id}})">Delete Line</a>
+                                                        			@elseif($item->fk_warehouse > 0 && $item->is_cancelled == 0)
+                                                        			
+                                                        			@else
+                                                        		    <p style="color:Red;">	{{$item->cancelReason->reason}} </p>
+                                                        	@endif
+                                                        	</td>
                                                        <td>
                                                             <span class="disp-currency txt-align-center width-100p">{{number_format($item->products_price,2,'.','')}}</span>
                                           
@@ -1073,7 +1117,7 @@
 		                                        <button id="assign" name="assign" class="btn btn-primary">Assign</button>
 		                                   </div>
 		                              </div> -->
-		                              @if($orderItemCount != $createdItemCount)
+		                              @if($orderItemCount != $createdItemCount && $order->fk_order_status != 6)
 			                        <div class="col-md-12 ">
 			                      		{{ Config::get('services.shipping.company_name')}}
 			                        </div>
@@ -1199,14 +1243,11 @@
                               </div>
 
                               <!-- Button -->
-                              <div class="form-group col-md-12 button-area">
-                                   <div class="col-md-1 pull-right">
-                                        <button id="" name="" class="btn btn-primary">Save</button>
-                                   </div>
-                              </div>
+                  
                          </fieldset>
                     {!! Form::close() !!}
                     <!-- -->
+            
                </div>
           </div>
           <!-- Item Orders Code End Above -->
@@ -1246,7 +1287,7 @@
                                         @if( count($orderStatuslogsData) > 0 )
                                        @foreach($orderStatuslogsData as $key=>$value)
                                              <tr>
-                                                  <td>{{App\Lib\Helper::formatDate($value->created_at)}}</td>
+                                                  <td>{{App\Helpers\Helpers::formatDate($value->created_at)}}</td>
                                             
                                                   <td>{{!empty($value->fromStatus['status_name'])?$value->fromStatus['status_name']:"-"}}</td>
                                                   <td>{{$value->toStatus['status_name']}}</td>
@@ -1300,7 +1341,7 @@
                                        @if( count($shipmentStatuslogsData) > 0 )
                                        @foreach($shipmentStatuslogsData as $key=>$value)
                                              <tr>
-                                                  <td>{{App\Lib\Helper::formatDate($value->created_at)}}</td>
+                                                  <td>{{App\Helpers\Helpers::formatDate($value->created_at)}}</td>
                                                   <td>{{$value->fk_shipment}}</td>
                                                   <td>{{!empty($value->fromStatus['status_name'])?$value->fromStatus['status_name']:"-"}}</td>
                                                   <td>{{$value->toStatus['status_name']}}</td>
@@ -1377,9 +1418,47 @@
            </table>
        </div>
    </div> --}}
+   
+    <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        {!! Form::open(array('url'=>'order/update/'.$order->order_id, 'method' => 'post','class'=>'form-horizontal')) !!}	
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Cancel Item</h4>
+        </div>
+        <div class="modal-body">
+            		
+                  
+                       <div class="row"> 
+                       <div class="col-md-6">Please select the reason to cancel the order item.</div>
+                        <div class="form-group col-md-5">                                        
+                     	{!! Form::select('cancel_reason',["0"=>'Select Reason']+$cancelReasons,null,array('class' => 'form-control ','maxlength'=>"",'tabindex'=>"40",'style'=>'font-size: 9px;')) !!}                                             
+                   		</div>
+                   		<input type="hidden" id="order_item_id" name="order_item_id" > 
+                    
+	                    </div>
+                    
+                   
+        </div>
+        <div class="modal-footer">
+           <button id="cancel" name="cancel" value="cancel" class="btn btn-primary">Cancel Item</button>  
+        </div>
+        
+        {!! Form::close() !!}
+      </div>
+      
+    </div>
+  </div>
+  
+  
    @section('script')
 	<script type="text/javascript">
 
+
+   
 	$('.warehouse').on('change', function() {
 		if(this.value == "0")
 		{
@@ -1394,11 +1473,80 @@
 	
 	function resetWarehouses()
 	{
-		var inputs = document.getElementsByClassName('warehouse');
-		for(var i = 0; i < inputs.length; i++) {
-		    inputs[i].disabled = false;
-		}
+		 $('.warehouse').filter(function() {
+		 		if(!this.disabled)
+		 		{
+		 			$('option:disabled',this).removeAttr('disabled');
+			 	}
+		 	});
+			
 	}
+	function openCancelReason(orderItemId)
+	{
+		//var divId = "cancel_reason_div";
+		$('#myModal').modal('show'); 
+		$("#order_item_id").val(orderItemId);
+		//$("#"+divId).show();
+
+
+		  /* $("#"+divId).animate({
+		       scrollTop: $("#"+divId)[0].scrollHeight}, 2000);*/
+
+				
+	}
+
+	$('#order_status').on('change', function() {
+
+		if(this.value == 'x')
+		{	
+			$('#order_cancel_reason_div').show();
+			$('#order_cancel_reason').prop('required',true);
+		}
+		$('#supervisor_password').show();
+	});
+
+	function changeStatus(formId)
+	{ 
+		var $form =  $('#'+formId);
+	    // Serialize the data in the form
+	    var serializedData = $form.serialize();
+		request = $.ajax({
+        url:  $form.attr("action"),
+        type: "post",
+        data: serializedData
+    	});
+
+    // Callback handler that will be called on success
+    request.done(function (response, textStatus, jqXHR){
+        // Log a message to the console
+        console.log(response);
+        $('#messageDiv').show();
+        if(typeof response.error != "undefined" )
+        {
+        	$('#order_status_success').text("");
+            $('#order_status_error').text(response.error);
+        }
+        else
+        {
+        
+        	 $('#order_status_error').text("");
+             $('#order_status_success').text(response.success);
+         	location.reload();
+        }
+        
+    });
+
+    // Callback handler that will be called on failure
+    request.fail(function (jqXHR, textStatus, errorThrown){
+        // Log the error to the console
+        console.error(
+            "The following error occurred: "+
+            textStatus, errorThrown
+        );
+    });
+
+	}
+	
    	</script>
    @endsection 
    
