@@ -51,9 +51,10 @@
      	{{  Form::open(array('url'=>'order/status_update/'.$order->order_id, 'method' => 'post','class'=>'form-horizontal','id'=>'updateOrderStatus')) }}	
       <!-- Order Status Update Code Row Start Below -->   
      <div class="form-group row ">
+               
 			<div class="col-md-3 col-md-offset-9 ">
-				{!! Form::select('order_status',[""=>'Change Status']+$orderStatuses,$order->orderStatus['status_code'],array('id'=>'order_status','class' => 'form-control input-md')) !!}
-					</div>
+				{!! Form::select('order_status',[""=>'Change Status']+$orderStatuses,null,array('id'=>'order_status','class' => 'form-control input-md')) !!}
+			</div>
     				
     </div>
 
@@ -922,7 +923,7 @@
                                                        <div class="col-md-3 font-size-11">(US $0.00)</div>
                                                   </div>
                                                   <div class="row">
-                                                       <div class="col-md-6 font-size-11">ORIGINAL sHIPPING & HANDLING (FEDEX INTERNATIONAL PRIORITY) :</div>
+                                                       <div class="col-md-6 font-size-11">ORIGINAL SHIPPING & HANDLING (FEDEX INTERNATIONAL PRIORITY) :</div>
                                                        <div class="col-md-3 font-size-11">GBP £0.0</div>
                                                        <div class="col-md-3 font-size-11">(US $0.00)</div>
                                                   </div>
@@ -1032,7 +1033,7 @@
                          						<tr>
                                                        <td>
                                                              <div class="col-md-12 control-label no-padding">
-                                                              @if($item->fk_warehouse > 0)
+                                                              @if($item->fk_warehouse > 0 || $item->is_cancelled == 1)
                                                               {!! Form::select('warehouse['.$item->order_product_id.']',["0"=>'Select Warehouse']+$item->warehouses,$item->fk_warehouse,array('class' => 'form-control warehouse','disabled'=>'disabled','maxlength'=>"",'tabindex'=>"40",'style'=>'font-size: 9px;')) !!}
                                                               @else
                                                               {!! Form::select('warehouse['.$item->order_product_id.']',["0"=>'Select Warehouse']+$item->warehouses,$item->fk_warehouse,array('class' => 'form-control warehouse','maxlength'=>"",'tabindex'=>"40",'style'=>'font-size: 9px;')) !!}
@@ -1117,7 +1118,7 @@
 		                                        <button id="assign" name="assign" class="btn btn-primary">Assign</button>
 		                                   </div>
 		                              </div> -->
-		                              @if($orderItemCount != $createdItemCount && $order->fk_order_status != 6)
+		                              @if($orderItemCount != $createdItemCount && ($order->fk_order_status == App\Models\OrderStatus::getStatusIdByCode(App\Models\OrderStatus::CONFIRMED) || $order->fk_order_status == App\Models\OrderStatus::getStatusIdByCode(App\Models\OrderStatus::INPROCESS)) )
 			                        <div class="col-md-12 ">
 			                      		{{ Config::get('services.shipping.company_name')}}
 			                        </div>

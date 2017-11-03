@@ -56,19 +56,18 @@ class ShipmentController extends Controller
 	{
 
 		
-		//assign warehouse  --- it should check quantity available ,if not then dont need to create shipment of this item.
-		//#todo : question if only one product ship among 2 then shipment total contain product total
-		
+		//assign warehouse  --- it should check quantity available ,if not then dont need to create shipment of this item.		
 		if(count($input['warehouse']) > 0)
 		{	
 			// make order status in process
 			$orderItemIds =[];
 			foreach($input['warehouse'] as $orderItemId=>$warehouse)
 			{
-				if($warehouse != "0")
+				$orderItem = new OrderItem();
+				$orderItemDetail = $orderItem->where('order_product_id',$orderItemId)->where('is_cancelled',0)->first();
+				if($warehouse != "0" && !empty($orderItemDetail))
 				{
-					$orderItem = new OrderItem();
-					$orderItemDetail = $orderItem->where('order_product_id',$orderItemId)->first();
+					
 					$orderedQuantity = $orderItemDetail->ordered_quantity;
 					$inventoryId = $orderItemDetail->fk_inventory;
 					$logWarehouseTotal = new LogWarehouseTotal();
@@ -105,6 +104,7 @@ class ShipmentController extends Controller
 	public function deliver($orderId,$shipmentId)
 	{	
 		//#todo : ship quantity update to order_item and shipment_product
+		//#todo : check all shipments done against order mark it as completed
 		//update shipment status using orderId
 		$shipment  = new Shipment();
 		// from shipped to delivered
@@ -112,7 +112,7 @@ class ShipmentController extends Controller
 		$to = ShipmentStatus::getStatusIdByCode(ShipmentStatus::DELIVERED);
 		$shipment->updateShipmentStatus($from,$to,$orderId,$shipmentId);
 		$shipment->updateInventoryAndLogs($orderId,$shipmentId);
-		//check all shipments done against order mark it as completed
+	
 		$order = new Order();
 		$order->checkShipmentAndUpdateOrderStatus($orderId);
 		return redirect()->to("/order/".$orderId);
