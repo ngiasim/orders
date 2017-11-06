@@ -103,8 +103,6 @@ class ShipmentController extends Controller
 	}
 	public function deliver($orderId,$shipmentId)
 	{	
-		//#todo : ship quantity update to order_item and shipment_product
-		//#todo : check all shipments done against order mark it as completed
 		//update shipment status using orderId
 		$shipment  = new Shipment();
 		// from shipped to delivered
@@ -112,9 +110,8 @@ class ShipmentController extends Controller
 		$to = ShipmentStatus::getStatusIdByCode(ShipmentStatus::DELIVERED);
 		$shipment->updateShipmentStatus($from,$to,$orderId,$shipmentId);
 		$shipment->updateInventoryAndLogs($orderId,$shipmentId);
-	
 		$order = new Order();
-		$order->checkShipmentAndUpdateOrderStatus($orderId);
+		$order->updateShipmentAndOrder($orderId);
 		return redirect()->to("/order/".$orderId);
 	
 		
