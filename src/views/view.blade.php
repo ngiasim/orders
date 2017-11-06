@@ -43,7 +43,7 @@
           <div class="page-header admin-header">
               <h3 id="page-title">Order #{{$order->order_id}} ({{$order->orderStatus['status_name']}})</h3>
               <div class="order-heading-info">
-                   Created By <span>Muhammad Fahim</span> on {{\Carbon\Carbon::parse($order->created_at)->toDayDateTimeString() }}
+                   Created By <span>  {{$order->createdUser['first_name']." ".$order->createdUser['last_name']}}</span> on {{App\Helpers\Helpers::formatDateTime($order->created_at)}}
               </div>
         
           </div>
