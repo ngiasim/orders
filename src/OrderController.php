@@ -360,11 +360,8 @@ class OrderController extends Controller
     		$orderDetail = Order::with('orderItem')->find($orderId)->toArray();
     		if($toOrderStatus == OrderStatus::CANCELLED )
     		{
-    			$cancelReasonId = $input['order_cancel_reason'];
-    		
-    			$orderItemIds = array_column($orderDetail['order_item'], 'order_product_id');
-    			
-    			
+    			$cancelReasonId = $input['order_cancel_reason'];    		
+    			$orderItemIds = array_column($orderDetail['order_item'], 'order_product_id');	
     			$orderItem = new OrderItem();
     			$orderItem->cancelItem($orderItemIds,$cancelReasonId,$orderId);
     		}
