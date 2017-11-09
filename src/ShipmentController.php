@@ -14,6 +14,7 @@ use App\Models\Warehouse;
 use App\Models\Shipment;
 use App\Models\ShipmentStatus;
 use App\Models\ShipmentProduct;
+use App\Models\GiftCard;
 use App\Models\LogWarehouseTotal;
 use DB;
 
@@ -61,11 +62,12 @@ class ShipmentController extends Controller
 		{	
 			// make order status in process
 			$orderItemIds =[];
+			$is_gc = 0;
 			foreach($input['warehouse'] as $orderItemId=>$warehouse)
 			{
 				$orderItem = new OrderItem();
 				$orderItemDetail = $orderItem->where('order_product_id',$orderItemId)->where('is_cancelled',0)->first();
-				if($warehouse != "0" && !empty($orderItemDetail))
+				if(($warehouse != "0" && !empty($orderItemDetail)) )
 				{
 					
 					$orderedQuantity = $orderItemDetail->ordered_quantity;
@@ -73,12 +75,17 @@ class ShipmentController extends Controller
 					$logWarehouseTotal = new LogWarehouseTotal();
 					 $availableQuantity = $logWarehouseTotal->getAvailableQuantity($warehouse ,$inventoryId);
 					// get order quantity and available quantity 
-					// check 
-					if($availableQuantity >= $orderedQuantity)
+					// check if gc product no check of available quantity
+					if(($availableQuantity >= $orderedQuantity ) || $orderItemDetail['is_gc'] == 1 )
 					{
 						$orderDetail['fk_warehouse'] = $warehouse;
 						array_push($orderItemIds,$orderItemId);
 						$orderItem->where('order_product_id',$orderItemId)->update($orderDetail);	 
+					}
+					
+					if($orderItemDetail['is_gc']  == 1)
+					{
+						$is_gc++;
 					}
 				}
 			}
@@ -94,6 +101,11 @@ class ShipmentController extends Controller
 			 $shipment->updateShipment($response,$shipmentId);
 		 }
 		 
+		 //if gc product marked as deliever
+		 if($is_gc > 0 )
+		 {
+		 	$this->processGCshipment($orderId,$shipmentId,$orderItemIds);
+		 }
 	}
 
 	public function shippingThirdPartyCall()
@@ -101,7 +113,7 @@ class ShipmentController extends Controller
 		$response = ['tracking_no'=>uniqid()];
 		return $response;
 	}
-	public function deliver($orderId,$shipmentId)
+	public function deliver($orderId,$shipmentId,$gc=false)
 	{	
 		//update shipment status using orderId
 		$shipment  = new Shipment();
@@ -109,12 +121,28 @@ class ShipmentController extends Controller
 		$from = ShipmentStatus::getStatusIdByCode(ShipmentStatus::SHIPPED);
 		$to = ShipmentStatus::getStatusIdByCode(ShipmentStatus::DELIVERED);
 		$shipment->updateShipmentStatus($from,$to,$orderId,$shipmentId);
-		$shipment->updateInventoryAndLogs($orderId,$shipmentId);
-		$order = new Order();
-		$order->updateShipmentAndOrder($orderId);
+		if(!$gc)
+		{
+			$shipment->updateInventoryAndLogs($orderId,$shipmentId);
+			$order = new Order();
+			$order->updateShipmentAndOrder($orderId);
+		}
+		
 		return redirect()->to("/order/".$orderId);
 	
 		
+	}
+	
+	public function processGCshipment($orderId,$shipmentId,$orderItemIds)
+	{
+		//#todo email fire 	
+		$this->deliver($orderId,$shipmentId,true);
+		//make gc status to 1
+		$inventoryIds = OrderItem::whereIn('order_product_id',$orderItemIds)->pluck('fk_inventory');
+		$giftCard = new GiftCard();
+		$giftCard->updateStatus($orderId,$inventoryIds);
+	
+
 	}
 	
 }
