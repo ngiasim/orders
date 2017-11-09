@@ -22,6 +22,38 @@
                 <div class="panel-body">
 
                 {!! Form::open(['method'=>'patch','url' => "",'name'=>"frm_porder",'id'=>"frm_porder"]) !!}
+                @if (count($curr_reg_country_numm) > 0)
+                <div class="form-group row">
+                    {{ Form::label('Select Country: ', null, ['class' => 'col-sm-2 col-form-label col-form-label-lg']) }}
+                  <div class="col-sm-4">
+                    {{ Form::select('region_country', $countries,$curr_reg_country_numm[0]->country_id,array("id"=>"region_country","onchange"=>"hidall();")) }}
+                  </div>
+                </div>
+                @else
+                <div class="form-group row">
+                    {{ Form::label('Select Country: ', null, ['class' => 'col-sm-2 col-form-label col-form-label-lg']) }}
+                  <div class="col-sm-4">
+                    {{ Form::select('region_country', $countries,'233',array("id"=>"region_country","onchange"=>"hidall();")) }}
+                  </div>
+                </div>
+
+                @endif
+                @if (count($curr_num) > 0)
+                <div class="form-group row">
+                    {{ Form::label('Select Currency: ', null, ['class' => 'col-sm-2 col-form-label col-form-label-lg']) }}
+                  <div class="col-sm-4">
+                    {{ Form::select('checkout_currency', $currencies,$curr_num[0]->currency_id,array("id"=>"checkout_currency","onchange"=>"hidall();")) }}
+                  </div>
+                </div>
+                @else
+                <div class="form-group row">
+                    {{ Form::label('Select Currency: ', null, ['class' => 'col-sm-2 col-form-label col-form-label-lg']) }}
+                  <div class="col-sm-4">
+                    {{ Form::select('checkout_currency', $currencies,'1',array("id"=>"checkout_currency","onchange"=>"hidall();")) }}
+                  </div>
+                </div>
+
+                @endif
 
                 <div class="form-group row">
                   {{ Form::label('Search Customer: ', null, ['class' => 'col-sm-2 col-form-label col-form-label-lg']) }}
@@ -47,13 +79,16 @@
                         <!-- </button> -->
                     <!-- </div> -->
                   </div>
-                  <div id="customers-view"class="form-group row">
+                  <div id="customers-view" class="form-group row">
                       @include('orders::selectedcustomer')
                   </div>
 				  </div>
+          @if (count($customers) > 0)
+                <div id="product-section" style="display:;" class="panel-body">
+          @else
+                <div id="product-section" style="display:none;" class="panel-body">
+          @endif
 
-
-				  <div class="panel-body">
 
                 {!! Form::open(['method'=>'patch','url' => "",'name'=>"frm_porder",'id'=>"frm_porder"]) !!}
 
@@ -77,12 +112,17 @@
 				  <div id="product-view"class="form-group row">
 				  </div>
 				  </div>
+          @if (count($customers) > 0)
+                <div id="cart-section" style="display:;" class="panel-body">
+          @else
+                <div id="cart-section" style="display:none;" class="panel-body">
+          @endif
 				  <div class="panel-heading">Cart</div>
-				  <div class="panel-body">
 					  <div id="cartviewlist" class="form-group row">
 					  @include('cart::index')
 					  </div>
 				  </div>
+        </div>
 			</div>
 		</div>
 	</div>
@@ -90,9 +130,12 @@
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 
 <script>
-
 //var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-
+  function hidall()
+  {
+    $("#product-section").hide();
+    $("#customers-view").hide();
+  }
   function placeorder()
   {
     $.ajax({
@@ -108,24 +151,26 @@
           }
         });
   }
-
   function selectcustomer(id){
-     $("#clid").val(id);
+   $("#clid").val(id);
+   var region_country = $("#region_country").val();
+   var checkout_currency = $("#checkout_currency").val();
    $.ajax({
          url: "/addCartCustomer",
          dataType: 'JSON',
          type:'POST',
-         data:{"_token": "{{ csrf_token() }}",customer_id: id},
+         data:{"_token": "{{ csrf_token() }}",customer_id: id,"region_country":region_country,"checkout_currency":checkout_currency},
          success: function (res) {
            if (res.success)
            {
              $("#customers-view").html(res.customerView);
+             $("#customers-view").show();
+             $("#product-section").show();
            }
          //location.href = "/phoneorder";
          }
        });
   }
-
   function lookupcustomer()
    {
     var customer = $("#src_customer").val();
@@ -136,11 +181,11 @@
             if (res.success)
             {
                 $("#customers-view").html(res.customerView);
+                $("#customers-view").show();
             }
           }
         });
    }
-
   function lookup()
 	 {
 		var productId = $("#product_id").val();
@@ -151,17 +196,17 @@
             if (res.success)
             {
                 $("#product-view").html(res.productView);
+                $("#cart-section").show();
             }
               // /$("#product-view").html(res);
           }
         });
 	 }
-
 	 function addtocart(id){
      var invsku = $("#"+id+"-invsku").val();
      var invId =$("#"+id+"-invId").val();
-     console.log(invsku);
-     console.log(invId);
+    //  console.log(invsku);
+    //  console.log(invId);
 		$.ajax({
           url: "/addcart",
           dataType: 'JSON',
@@ -195,7 +240,6 @@
       });
 }
       function deletecartitem(rowid){
-
         $.ajax({
                url: "/deletecartitem",
                dataType: 'JSON',

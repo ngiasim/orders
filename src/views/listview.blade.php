@@ -11,7 +11,7 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                 {!! Form::open(array('id' => 'search-form','method'=>'POST', 'class'=>'form-inline ')) !!}
-              
+
                         <div class="form-group">
                          {!! Form::text('order_id', null, array('placeholder' => 'Order Id','class' => 'form-control')) !!}
 
@@ -22,11 +22,11 @@
                         </div>
                         	<div class="form-group">
                				{!! Form::select('order_source',[""=>'All order']+['p'=>'Phone','s'=>'Store'],'',array('class' => 'form-control')) !!}
-                     
+
                         </div>
                			<div class="form-group">
                				{!! Form::select('status',[""=>'Select Status']+$order_statuses,'',array('class' => 'form-control')) !!}
-                     
+
                         </div>
                                   <div class="form-group">
                          {!! Form::text('customer',null, array('placeholder' => 'Customer Name/Email','class' => 'form-control')) !!}
@@ -36,28 +36,28 @@
                          {!! Form::text('contact_no',null, array('placeholder' => 'Contact #','class' => 'form-control')) !!}
 
                         </div>
-                        
-              
-                        <div class="form-group">    
+
+
+                        <div class="form-group">
                             <button type="submit" class="btn btn-primary filter-col">
                                  Search
-                            </button>  
+                            </button>
                         </div>
                     	{!! Form::close() !!}
                 </div>
             </div>
-        </div>    
-     
+        </div>
+
 
         <div class="">
             <table class="table table-striped" id="order_table">
                 <thead>
                 <tr>
                     <th class="col-sm-2">Order ID</th>
-                
+
                      <th class="col-sm-3">Customer </th>
                      <th class="col-sm-3">Contact #</th>
-         
+
                       <th class="col-sm-3">Status</th>
                       <th class="col-sm-3">Order Source</th>
                          <th class="col-sm-8">Order Date</th>
@@ -65,14 +65,14 @@
                     <th class="col-sm-2">Action</th>
                 </tr>
                 </thead>
-              
+
 
             </table>
         </div>
     </div>
 @endsection
 @section('script')
-    
+
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -96,12 +96,12 @@ $(document).ready(function() {
 			{data: 'id', name: 'id', "orderable": false},
             {data: 'customer_name', name: 'customer_name'},
             {data: 'customer_no', name: 'customer_no'},
-            
+
             {data: 'status', name: 'status'},
             {data: 'order_source', name: 'order_source'},
             {data: 'order_date', name: 'order_date'},
             {data: 'delivery_date', name: 'delivery_date'},
-            
+
             {data: 'action', name: 'action'},
         ]
     });
