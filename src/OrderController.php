@@ -30,13 +30,14 @@ use App\Models\LogShipmentStatus;
 use App\Models\LogOrderStatus;
 use App\Models\CancelReason;
 use DB;
+use Config;
 
 class OrderController extends Controller
 {
 
   public function phoneOrder()
   {
-      // dd(\Session::all());
+       //dd(\Session::all());
 
        $cartItems = Cart::content();
        $total = Cart::total('2','.','');
@@ -69,28 +70,20 @@ class OrderController extends Controller
 
   public function getProductsByProductId($id)
   {
-
-    // $products =  Product::with(array('productsDescription' => function($query) {
-    //       $query->select('id','username')->where('products_name', 'like','%Jacket%')->orwhere('product_id', '=', "Jacket");
-    //    }))->get();
-    //$products =  Product::where('product_id', '=', $id)->orWhere('meta_keywords','like','%'.$id.'%')->with('productsDescription')->get();
     $products =  Product::where('product_id', '=', $id)
     ->orWhere('meta_keywords','like','%'.$id.'%')
     ->with('productsDescription')
     ->with('ProductAttribute')
     ->limit(10)->get();
 
-  //dd($products);
-  foreach ($products as $p ) {
+    foreach ($products as $p ) {
 
-    foreach ($p->ProductAttribute as $o ) {
-      $productOptionObj = ProductOption::find($o->fk_product_option);
+      foreach ($p->ProductAttribute as $o ) {
+        $productOptionObj = ProductOption::find($o->fk_product_option);
 
-      $product_options[$p->products_sku][] = $productOptionObj->display_name;
+        $product_options[$p->products_sku][] = $productOptionObj->display_name;
+      }
     }
-  }
-
-  //dd($product_options);
 
      foreach ($products as $option ) {
       $products_attributes =   Product::join('map_product_inventory_item as mpii','mpii.fk_product','product_id')
@@ -102,21 +95,15 @@ class OrderController extends Controller
       ->select('inventory_id','products_sku','inventory_code','product_option_id','po.name as option_name','pov.name',
        DB::Raw('(qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty'),'ii.inventory_price','ii.inventory_price_prefix','base_price')
        ->get();
-//dd($products_attributes);
-  // DB::raw('qty_onhand')-DB::raw('qty_reserved')-DB::raw('qty_admin_reserved')+DB::raw('qty_preorder' as qty))
-      //  $products_attributes= DB::select('Select inventory_id,p.products_sku,inventory_code,product_option_id,po.name as option_name,pov.name,
-      //   (qty_onhand-qty_reserved-qty_admin_reserved)+qty_preorder as qty
-      //   from inventory_item ii,inventory_item_detail iid,product_option_value pov,product_option po
-      //   ,product p,map_product_inventory_item mpii
-      //   where inventory_id = iid.fk_inventory_item
-      //   and iid.fk_product_option_values = product_option_value_id
-      //   and iid.fk_product_option = product_option_id
-      //   and mpii.fk_inventory_item = ii.inventory_id
-      //   and product_id = mpii.fk_product
-      //   and product_id ='.$option->product_id);
-       //dd($products_attributes);
+
       $region_country = \Session::get('region_country');
  			$checkout_currency = \Session::get('checkout_currency');
+
+      if ($region_country=="")
+          $region_country = 233;
+
+      if ($checkout_currency=="")
+          $checkout_currency = 57;
 
  			$reg_currency_data = Country::where('country_id', '=', $region_country)->get();
  			$checout_currency_data = Currency::where('currency_id', '=', $checkout_currency)->get();
@@ -147,13 +134,17 @@ class OrderController extends Controller
         }
 
      }
-//dd($json_cook_atributes_product);
-//dd($cook_atributes_product);
+     
     $productView = \View::make('orders::productlisting', array("products"=>$products,"cook_atributes_product"=>$cook_atributes_product,"json_cook_atributes_product"=>json_encode($json_cook_atributes_product),"product_options"=>$product_options))->render();
-    $data = array(
-        "productView" => $productView
-    );
-    return $this->generateSuccessResponse($data);
+    if (request()->getHost() == "store.femi9.local")
+    {
+      return $productView;
+    }else{
+      $data = array(
+          "productView" => $productView
+      );
+      return $this->generateSuccessResponse($data);
+    }
   }
 
   public function getCustomersByCustomerId($id)

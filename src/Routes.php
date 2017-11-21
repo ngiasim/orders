@@ -1,4 +1,31 @@
 <?php
+
+
+
+Route::group([
+    //'namespace' => 'HomeBuilder',
+    'domain' => Config::get('app.domains.store'),
+    'middleware' => ['web']
+], function () {
+	Route::group([
+		
+	], function () {
+	    Route::post('/addcart', 'ngiasim\orders\CartController@addToCart');
+      Route::get('/cart', 'ngiasim\orders\CartController@index');
+      Route::post('/updatecart', 'ngiasim\orders\CartController@updateCart');
+      Route::post('/deletecartitem', 'ngiasim\orders\CartController@deleteCartItem');
+	});
+
+  Route::group([
+		'middleware' => ['auth']
+	], function () {
+	    // Route::post('/addcart', 'ngiasim\orders\CartController@addToCart');
+      // Route::get('/cart', 'ngiasim\orders\CartController@index');
+      // Route::post('/updatecart', 'ngiasim\orders\CartController@updateCart');
+      // Route::post('/deletecartitem', 'ngiasim\orders\CartController@deleteCartItem');
+	});
+});
+
 Route::group([
     'domain' => Config::get('app.domains.cockpit')
 ], function () {
@@ -7,7 +34,7 @@ Route::group([
 		Route::group([
 		'middleware' => ['auth']
 	], function () {
-		
+
         Route::get('/cart', 'ngiasim\orders\CartController@index'); //->name('roles.destroy')->middleware(['permission:role-delete']);
     	Route::post('/addcart', 'ngiasim\orders\CartController@addToCart'); //->name('roles.destroy')->middleware(['permission:role-delete']);
     	Route::post('/updatecart', 'ngiasim\orders\CartController@updateCart');
@@ -24,13 +51,13 @@ Route::group([
         Route::get('/order/{id}','ngiasim\orders\OrderController@viewOrder');
         Route::post('/order/status_update/{id}','ngiasim\orders\OrderController@updateStatus');
         Route::post('/saveAddress', 'ngiasim\orders\OrderController@saveAddress');
-        
-        Route::post('/addComment/{id}', 'ngiasim\orders\OrderController@addComment'); 
-        
-        //Route::resource('products','ngiasim\products\ProductController');	
-        
-        
-        
+
+        Route::post('/addComment/{id}', 'ngiasim\orders\OrderController@addComment');
+
+        //Route::resource('products','ngiasim\products\ProductController');
+
+
+
 	});
 		Route::group([
 				'middleware' => ['auth']
@@ -39,8 +66,8 @@ Route::group([
 			Route::post('/order/update/{id}','ngiasim\orders\ShipmentController@updateOrder');
 			Route::get('/order/deliver/{orderId}/{shipmentId}','ngiasim\orders\ShipmentController@deliver');
 			/////****** shipments ********/////
-			
+
 		});
-		
+
 	});
 		});

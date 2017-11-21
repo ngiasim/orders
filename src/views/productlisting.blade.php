@@ -17,24 +17,37 @@
                <td>{{$row->productsDescription['products_name']}}</td>
                <td>{{$row->productsDescription['products_description']}}</td>
                <td>
-
-                 @foreach($cook_atributes_product[$row->products_sku] as $r => $v)
-                  @if ($loop->iteration === 1)
-                      <select id="{{$row->product_id}}-{{$r}}" name="{{$row->product_id}}-{{$r}}" onChange="showAttribute('{{$loop->iteration - 1}}','{{count($product_options[$row->products_sku])}}','{{$r}}','{{$product_options[$row->products_sku][$loop->iteration]}}','{{$row->product_id}}',this.options[this.selectedIndex].value,'{{$row->products_sku}}');">
-                          <option value="">Select {{$r}}</option>
-                          @foreach($v as $key => $val)
-                              <option value={{$val}}>{{$val}}</option>
-                          @endforeach
+                 @if (count($cook_atributes_product[$row->products_sku]) > 1)
+                     @foreach($cook_atributes_product[$row->products_sku] as $r => $v)
+                      @if ($loop->iteration === 1)
+                          <select id="{{$row->product_id}}-{{$r}}" name="{{$row->product_id}}-{{$r}}" onChange="showAttribute('{{$loop->iteration - 1}}','{{count($product_options[$row->products_sku])}}','{{$r}}','{{$product_options[$row->products_sku][$loop->iteration]}}','{{$row->product_id}}',this.options[this.selectedIndex].value,'{{$row->products_sku}}');">
+                              <option value="">Select {{$r}}</option>
+                              @foreach($v as $key => $val)
+                                  <option value={{$val}}>{{$val}}</option>
+                              @endforeach
+                          </select>
+                      @elseif ($loop->iteration < count($cook_atributes_product[$row->products_sku]))
+                          <select id="{{$row->product_id}}-{{$r}}" style="display:none;" name="{{$row->product_id}}-{{$r}}" onChange="showAttribute('{{$loop->iteration - 1}}','{{count($product_options[$row->products_sku])}}','{{$r}}','{{$product_options[$row->products_sku][$loop->iteration]}}','{{$row->product_id}}',this.options[this.selectedIndex].value,'{{$row->products_sku}}');">
+                          </select>
+                      @else
+                      <select id="{{$row->product_id}}-{{$r}}" style="display:none;" name="{{$row->product_id}}-{{$r}}" onChange="setInventory('{{$row->product_id}}','{{$row->products_sku}}');">
                       </select>
-                  @elseif ($loop->iteration < count($cook_atributes_product[$row->products_sku]))
-                      <select id="{{$row->product_id}}-{{$r}}" style="display:none;" name="{{$row->product_id}}-{{$r}}" onChange="showAttribute('{{$loop->iteration - 1}}','{{count($product_options[$row->products_sku])}}','{{$r}}','{{$product_options[$row->products_sku][$loop->iteration]}}','{{$row->product_id}}',this.options[this.selectedIndex].value,'{{$row->products_sku}}');">
-                      </select>
+                      @endif
+                      @endforeach
                   @else
-                  <select id="{{$row->product_id}}-{{$r}}" style="display:none;" name="{{$row->product_id}}-{{$r}}" onChange="setInventory('{{$row->product_id}}','{{$row->products_sku}}');">
-                  </select>
-                  @endif
 
-                  @endforeach
+                    @foreach($cook_atributes_product[$row->products_sku] as $r => $v)
+                      <select id="{{$row->product_id}}-{{$r}}" style="" name="{{$row->product_id}}-{{$r}}" onChange="setInventory('{{$row->product_id}}','{{$row->products_sku}}');">
+                        <option value="">Select {{$r}}</option>
+                        @foreach($v as $key => $val)
+                            <option value={{$val}}>{{$val}}</option>
+                        @endforeach
+
+                      </select>
+
+                    @endforeach
+
+                  @endif
                   <!-- <div id="{{$row->product_id}}-colors"></div> -->
                     <!-- <select id="{{$row->product_id}}-colors" name="{{$row->product_id}}-colors" onChange="">
                     </select> -->

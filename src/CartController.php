@@ -13,6 +13,7 @@ use App\User;
 use App\Models\InventoryItem;
 use App\Models\Currency;
 use App\Models\Country;
+use App\Helpers\Helpers;
 
 
 class CartController extends Controller
@@ -20,22 +21,31 @@ class CartController extends Controller
 	public function index()
 	{
 
-			// $region_country = \Session::get('region_country');
-			// $checkout_currency = \Session::get('checkout_currency');
-			//
-			// $reg_currency_data = Country::where('country_id', '=', $region_country)->get();
-			// $checout_currency_data = Currency::where('currency_id', '=', $checkout_currency)->get();
+      $currencyObj = Helpers::getCurrencySymbolwithdirection();
 			$cartItems = Cart::content();
 			$total = Cart::total('2','.','');
 			$total_tax = Cart::tax('2','.','');
-			//$checkout_currency_symbol_right = $checout_currency_data[0]->symbol_right;
-	    return view('cart::index',compact('cartItems','total','total_tax'));
+			$total_items = Cart::count();
+
+			if (request()->getHost() == "store.femi9.local")
+	    {
+	       return view('store_cart::cart',compact('currencyObj','total_items','cartItems','total','total_tax'));
+	    }else{
+	    	 return view('cart::index',compact('currencyObj','cartItems','total','total_tax'));
+		  }
 	}
 
 	public function addToCart(Request $request)
 	{
+
 			$region_country = \Session::get('region_country');
 			$checkout_currency = \Session::get('checkout_currency');
+
+			if ($region_country=="")
+          $region_country = 233;
+
+      if ($checkout_currency=="")
+          $checkout_currency = 57;
 
 			$reg_currency_data = Country::where('country_id', '=', $region_country)->get();
 			$checout_currency_data = Currency::where('currency_id', '=', $checkout_currency)->get();
@@ -67,32 +77,69 @@ class CartController extends Controller
 
   public function updateCart(Request $request)
   {
+
     $input = $request->all();
-    //Cart::update($input['rowid'], array('qty' => 8));
+  	$currencyObj = Helpers::getCurrencySymbolwithdirection();
+
+
     Cart::update($input['rowid'],$input['updateitemsarr']); // array('name' => 'Product 1'));
 		$cartItems = Cart::content();
 		$total = Cart::total('2','.','');
 		$total_tax = Cart::tax('2','.','');
-		$cartView = \View::make('cart::index', array("cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
-		$data = array(
-				"cartview" => $cartView
-		);
-	 return $this->generateSuccessResponse($data);
+		$total_items = Cart::count();
+
+
+		if (request()->getHost() == "store.femi9.local")
+		{
+			$cartView = \View::make('store_cart::cartlist', array("currencyObj"=>$currencyObj,"total_items"=>$total_items,"cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
+			$quickcartView = \View::make('store_cart::quickcartlist', array("currencyObj"=>$currencyObj,"total_items"=>$total_items,"cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
+			$data = array(
+					"cartview" => $cartView,
+					"quickcartview" => $quickcartView
+			);
+		  return $this->generateSuccessResponse($data);
+
+		}else{
+
+				$cartView = \View::make('cart::index', array("currencyObj"=>$currencyObj,"cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
+				$data = array(
+						"cartview" => $cartView
+				);
+			  return $this->generateSuccessResponse($data);
+		}
   }
 
 	public function deleteCartItem(Request $request)
 	{
 		$input = $request->all();
     //Cart::remove($rowId);
+		$currencyObj = Helpers::getCurrencySymbolwithdirection();
+
+
     Cart::remove($input['rowid']);
 		$cartItems = Cart::content();
 		$total = Cart::total('2','.','');
 		$total_tax = Cart::tax('2','.','');
-		$cartView = \View::make('cart::index', array("cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
-		$data = array(
-				"cartview" => $cartView
-		);
-	 return $this->generateSuccessResponse($data);
+		$total_items = Cart::count();
+
+
+		if (request()->getHost() == "store.femi9.local")
+		{
+			$cartView = \View::make('store_cart::cartlist', array("currencyObj"=>$currencyObj,"total_items"=>$total_items,"cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
+			$quickcartView = \View::make('store_cart::quickcartlist', array("currencyObj"=>$currencyObj,"total_items"=>$total_items,"cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
+			$data = array(
+					"cartview" => $cartView,
+					"quickcartview" => $quickcartView
+			);
+		  return $this->generateSuccessResponse($data);
+
+		}else{
+				$cartView = \View::make('cart::index', array("currencyObj"=>$currencyObj,"cartItems"=>$cartItems,"total"=>$total,"total_tax"=>$total_tax))->render();
+				$data = array(
+						"cartview" => $cartView
+				);
+			 return $this->generateSuccessResponse($data);
+		 }
 	}
 
 	public function addCustomerToCart(Request $request)
@@ -108,6 +155,12 @@ class CartController extends Controller
 	    );
      return $this->generateSuccessResponse($data);
 	}
+
+	public function showproductlisting() {
+		dd("agay");
+	}
+
+
 
 
 }

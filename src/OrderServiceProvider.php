@@ -20,6 +20,7 @@ class OrderServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__.'/views', 'orders');
         $this->loadViewsFrom(__DIR__.'/views/cart', 'cart');
+        $this->loadViewsFrom(__DIR__.'/views/store/', 'store_cart');
         $this->loadMigrationsFrom(__DIR__.'/migrations');
         // $this->publishes([
         // __DIR__.'/views' => base_path('resources/views/orders'),
